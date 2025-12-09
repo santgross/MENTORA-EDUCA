@@ -1,0 +1,7 @@
+{
+  "name": "MENTORA EDUCA",
+  "description": "Plataforma de formación para Visitadores Médicos con IA, simulaciones y rutas adaptativas.",
+  "requestFramePermissions": [
+    "microphone"
+  ]
+}
