@@ -30,8 +30,8 @@ export interface UserProfile {
   streak: number;
   completedModules: number[];
   badges: string[];
-  completedQuizzes: string[];
-  lastActivity: string;
+  completedQuizzes: string[]; // IDs de quizzes completados para no repetir XP
+  lastActivity: string; // Fecha ISO de última actividad
 }
 
 export interface ChatSession {

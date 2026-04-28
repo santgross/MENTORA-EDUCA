@@ -149,7 +149,7 @@ const MODE_PLACEHOLDER: Record<AppMode, string> = {
       const aiMsg: Message = { id: (Date.now()+1).toString(), role: 'model', text: responseText, timestamp: new Date() };
       setMessages(prev => [...prev, aiMsg]);
       
-      // Sumar 5 XP por interacción general con el Mentor
+      // Sumar 5 XP por cada mensaje enviado al mentor
       onXPIncrease({ amount: 5 });
     } catch (err) {
       console.error('Failed to send message', err);

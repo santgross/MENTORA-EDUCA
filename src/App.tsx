@@ -81,8 +81,11 @@ function App() {
   const handleXPIncrease = (options: { amount: number; activityId?: string }) => {
     if (!userProfile) return;
     
+    // Garantizar que existan los arrays necesarios
+    const completedQuizzes = userProfile.completedQuizzes || [];
+    
     // Si hay activityId, verificar si ya se completó para evitar duplicar XP
-    if (options.activityId && userProfile.completedQuizzes.includes(options.activityId)) {
+    if (options.activityId && completedQuizzes.includes(options.activityId)) {
       return;
     }
 
@@ -90,7 +93,7 @@ function App() {
     const nowISO = now.toISOString();
 
     // Cálculo de racha (streak) basado en lastActivity
-    let newStreak = userProfile.streak;
+    let newStreak = userProfile.streak || 1;
     if (userProfile.lastActivity) {
       const lastDate = new Date(userProfile.lastActivity);
       
@@ -111,7 +114,7 @@ function App() {
       // Si diffDays === 0, ya participó hoy, la racha se mantiene
     }
 
-    const newXP = userProfile.xp + options.amount;
+    const newXP = (userProfile.xp || 0) + options.amount;
     
     // Recalcular rango automáticamente según los límites definidos en constants.ts
     let newRank = userProfile.rank;
@@ -122,16 +125,16 @@ function App() {
     }
 
     // Registrar quiz o actividad si aplica
-    const newQuizzes = options.activityId 
-      ? [...userProfile.completedQuizzes, options.activityId] 
-      : userProfile.completedQuizzes;
+    const newQuizzesList = options.activityId 
+      ? [...completedQuizzes, options.activityId] 
+      : completedQuizzes;
 
     const newProfile: UserProfile = { 
       ...userProfile, 
       xp: newXP, 
       rank: newRank,
       streak: newStreak,
-      completedQuizzes: newQuizzes,
+      completedQuizzes: newQuizzesList,
       lastActivity: nowISO
     };
 
