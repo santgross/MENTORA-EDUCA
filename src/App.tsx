@@ -1,4 +1,5 @@
 import { useState, useEffect } from 'react';
+import Landing from './components/Landing';
 import Sidebar from './components/Sidebar';
 import ChatInterface from './components/ChatInterface';
 import Onboarding from './components/Onboarding';
@@ -19,6 +20,7 @@ function App() {
   const [activeModule, setActiveModule] = useState<number>(0);
   const [messages, setMessages] = useState<Message[]>([]);
   const [isOnboardingComplete, setIsOnboardingComplete] = useState(false);
+  const [showLanding, setShowLanding] = useState(true);
   const [isSidebarOpen, setIsSidebarOpen] = useState(false);
   const [moduleIntroStates, setModuleIntroStates] = useState<Record<number, boolean>>({
     13: false,
@@ -36,6 +38,7 @@ function App() {
       const profile = JSON.parse(savedProfile);
       setUserProfile(profile);
       setIsOnboardingComplete(true);
+      setShowLanding(false);
       
       let initialModule = 0;
       if (profile.completedModules.includes(0)) {
@@ -61,7 +64,16 @@ function App() {
   const handleOnboardingComplete = (profile: UserProfile) => {
     setUserProfile(profile);
     setIsOnboardingComplete(true);
+    setShowLanding(false);
     localStorage.setItem('dr_medix_profile', JSON.stringify(profile));
+  };
+
+  const handleDemoAccess = (profile: UserProfile) => {
+    setUserProfile(profile);
+    setIsOnboardingComplete(true);
+    setShowLanding(false);
+    localStorage.setItem('dr_medix_profile', JSON.stringify(profile));
+    setActiveModule(1); // Entrar directo al M1
   };
 
   const handleLogout = () => {
@@ -168,6 +180,10 @@ function App() {
       setModuleIntroStates(prev => ({ ...prev, [id]: false }));
     }
   };
+
+  if (showLanding && !isOnboardingComplete) {
+    return <Landing onStart={() => setShowLanding(false)} onDemo={handleDemoAccess} />;
+  }
 
   if (!isOnboardingComplete) {
     return <Onboarding onComplete={handleOnboardingComplete} />;
