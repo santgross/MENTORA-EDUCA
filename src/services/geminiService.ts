@@ -104,9 +104,19 @@ export const sendMessageToGemini = async (
   const contextualizedMessage = `[MODO ACTUAL: ${currentMode}]\n${text}`;
   conversationHistory.push({ role: 'user', content: contextualizedMessage });
 
-  // Time-out de 15 segundos
+  // Truncar el system prompt si es demasiado extenso (máx 8000 caracteres)
+  let finalSystemPrompt = currentSystemPrompt;
+  if (finalSystemPrompt.length > 8000) {
+    finalSystemPrompt = finalSystemPrompt.substring(0, 8000) + "\n\n[Contexto adicional disponible bajo demanda]";
+  }
+
+  // Diagnóstico de carga
+  console.log('Enviando a Claude — longitud system prompt:', finalSystemPrompt.length);
+  console.log('Enviando a Claude — mensajes en historial:', conversationHistory.length);
+
+  // Time-out de 45 segundos
   const controller = new AbortController();
-  const timeoutId = setTimeout(() => controller.abort(), 15000);
+  const timeoutId = setTimeout(() => controller.abort(), 45000);
 
   try {
     const response = await fetch(API_URL, {
@@ -118,9 +128,9 @@ export const sendMessageToGemini = async (
         "anthropic-dangerous-direct-browser-access": "true"
       },
       body: JSON.stringify({
-        model: "claude-sonnet-4-5",
-        max_tokens: 1024,
-        system: currentSystemPrompt,
+        model: "claude-3-5-sonnet-20241022",
+        max_tokens: 800,
+        system: finalSystemPrompt,
         messages: conversationHistory,
         temperature: 0.7
       }),
