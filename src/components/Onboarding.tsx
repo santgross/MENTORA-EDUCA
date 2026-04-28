@@ -11,6 +11,7 @@ import { motion, AnimatePresence } from 'motion/react';
 
 interface OnboardingProps {
   onComplete: (profile: UserProfile) => void;
+  onBack?: () => void;
 }
 
 const MOTIVACIONES_NOVATO = [
@@ -28,7 +29,7 @@ const MOTIVACIONES_EXPERIMENTADO = [
   { id: 'specialty', text: 'Especializarme en un área terapéutica de alto valor', sub: 'Oncología, cardiología, endocrinología, neurología u otras.', icon: FlaskConical },
 ];
 
-const Onboarding: React.FC<OnboardingProps> = ({ onComplete }) => {
+const Onboarding: React.FC<OnboardingProps> = ({ onComplete, onBack }) => {
   const [step, setStep] = useState(1);
   const [name, setName] = useState('');
   const [email, setEmail] = useState('');
@@ -214,7 +215,18 @@ const Onboarding: React.FC<OnboardingProps> = ({ onComplete }) => {
           {/* Main Content Area */}
           <div className="flex-1 flex flex-col bg-white/[0.02] overflow-hidden">
             {/* Inner Padding Container */}
-            <div className="flex-1 p-4 sm:p-6 md:p-8 lg:p-10 flex flex-col overflow-hidden">
+            <div className="flex-1 p-4 sm:p-6 md:p-8 lg:p-10 flex flex-col overflow-hidden relative">
+              {/* Back to landing button */}
+              {onBack && step === 1 && (
+                <button 
+                  onClick={onBack}
+                  className="absolute top-4 left-4 sm:top-6 sm:left-6 flex items-center gap-1.5 text-[10px] font-bold text-white/30 hover:text-white transition-colors z-20 group"
+                >
+                  <RotateCcw size={12} className="rotate-180 group-hover:-translate-x-0.5 transition-transform" />
+                  Volver al inicio
+                </button>
+              )}
+              
               {/* Progress Header */}
               <div className="flex items-center justify-between mb-4 sm:mb-6 shrink-0">
                 <div className="flex gap-1.5 sm:gap-2">

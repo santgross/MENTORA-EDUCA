@@ -186,7 +186,7 @@ function App() {
   }
 
   if (!isOnboardingComplete) {
-    return <Onboarding onComplete={handleOnboardingComplete} />;
+    return <Onboarding onComplete={handleOnboardingComplete} onBack={() => setShowLanding(true)} />;
   }
 
   return (
