@@ -5883,6 +5883,8 @@ export const INITIAL_USER_PROFILE = {
   streak: 1,
   completedModules: [],
   badges: [],
+  completedQuizzes: [],
+  lastActivity: new Date().toISOString(),
 };
 
 // XP requerido para desbloquear cada módulo
@@ -5959,9 +5961,16 @@ export function getSystemPromptForModule(moduleId: number): string {
 }
 
 // Helper: calcular qué módulos están desbloqueados según XP actual
-export function getUnlockedModuleIds(_xp: number, completedModules: number[]): number[] {
-  // Si no completó el onboarding (M0), solo mostrar M0
-  if (!completedModules.includes(0)) return [0, 1, 2, 3, 4, 5, 6, 7, 8, 9, 10, 11, 12, 13, 14, 15, 16, 17, 18, 19];
-
-  return MODULES.map(m => m.id);
+export function getUnlockedModuleIds(xp: number, completedModules: number[]): number[] {
+  return MODULES.filter(m => {
+    // M0 y M1 siempre desbloqueados
+    if (m.id === 0 || m.id === 1) return true;
+    
+    // Si ya lo completó, está desbloqueado aunque baje de XP
+    if (completedModules.includes(m.id)) return true;
+    
+    // Requisito de XP
+    const requirement = MODULE_XP_REQUIREMENTS[m.id] || 0;
+    return xp >= requirement;
+  }).map(m => m.id);
 }

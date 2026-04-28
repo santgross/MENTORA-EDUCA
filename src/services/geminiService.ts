@@ -1,18 +1,13 @@
 
-import { GoogleGenAI, Chat, Content } from "@google/genai";
 import { getSystemPromptForModule } from "../constants";
 import { UserProfile, AppMode, Message } from "../types";
 
-let aiInstance: GoogleGenAI | null = null;
-let chatSession: Chat | null = null;
+// URL de la API de Anthropic
+const API_URL = 'https://api.anthropic.com/v1/messages';
 
-const getAIInstance = () => {
-  if (!aiInstance) {
-    // Standard environment variable name for Gemini API key
-    aiInstance = new GoogleGenAI({ apiKey: process.env.GEMINI_API_KEY });
-  }
-  return aiInstance;
-};
+// Variables persistentes en memoria para manejar la sesión de Claude
+let currentSystemPrompt: string = "";
+let conversationHistory: { role: 'user' | 'assistant', content: string }[] = [];
 
 /**
  * Determina el módulo activo basado en XP y módulos completados
@@ -21,36 +16,31 @@ export const getActiveModuleId = (user: UserProfile): number => {
   if (!user.completedModules.includes(0)) return 0;
   const completed = [...user.completedModules].sort((a, b) => b - a);
   const highestCompleted = completed[0] ?? 0;
-  // El módulo activo es el siguiente al más alto completado (mínimo 1)
   return Math.max(1, highestCompleted + 1 <= 19 ? highestCompleted + 1 : highestCompleted);
 };
 
+/**
+ * Inicializa la sesión de chat configurando el system prompt y el historial
+ * Mantiene la firma para compatibilidad con el resto de la aplicación.
+ */
 export const initializeChat = async (
   user: UserProfile,
   previousMessages: Message[] = [],
   activeModuleId?: number
 ) => {
-  const ai = getAIInstance();
-
-  // Determinar módulo activo
   const moduleId = activeModuleId ?? getActiveModuleId(user);
-
-  // Seleccionar el system prompt correcto para el módulo
   const baseSystemPrompt = getSystemPromptForModule(moduleId);
 
-  // Convertir historial de mensajes al formato de Gemini
-  const history: Content[] = previousMessages.map(msg => ({
-    role: (msg.role === 'user' ? 'user' : 'model') as 'user' | 'model',
-    parts: [{ text: msg.text }]
+  // Cargar historial en el formato de Claude (assistant en lugar de model)
+  conversationHistory = previousMessages.map(msg => ({
+    role: msg.role === 'user' ? 'user' : 'assistant',
+    content: msg.text
   }));
 
-  const hasHistory = history.length > 0;
-
-  // Instrucción específica según si es sesión nueva o continuación
+  const hasHistory = conversationHistory.length > 0;
   let specificInstruction = "";
 
   if (!hasHistory) {
-    // SESIÓN NUEVA — primera interacción del módulo
     if (moduleId === 1) {
       specificInstruction = `
 **ESTADO ACTUAL:** El estudiante ACABA de iniciar el Módulo 1 por primera vez.
@@ -70,25 +60,17 @@ NOTA: NO preguntes "¿en qué te ayudo?". TOMA LA INICIATIVA con el dilema estra
 1. Bienvenida al módulo: Indica el nombre del módulo y felicita al estudiante por haber llegado hasta aquí.
 2. Resumen de lo que aprenderá en este módulo (3 puntos clave).
 3. Pregunta diagnóstica de nivel: Haz la pregunta de detección de nivel específica de este módulo.
-
-NOTA: Sé motivador y directo. Adapta el nivel según la respuesta diagnóstica.
       `;
     }
   } else {
-    // SESIÓN EN CURSO — continuación de conversación
     specificInstruction = `
-**ESTADO ACTUAL:** Conversación en curso en el Módulo ${moduleId}. El estudiante ya ha interactuado contigo.
-
-**REGLAS DE CONTINUIDAD:**
-1. MEMORIA ACTIVA: Analiza el historial de chat. Tus respuestas deben tener coherencia total con lo último que se habló.
-2. CERO REPETICIONES: NO vuelvas a dar la bienvenida ni a presentarte como Dr. Medix.
-3. REFUERZO POSITIVO variado: "¡Excelente, ${user.name}!", "¡Muy bien analizado!", "¡Exacto!", "¡Punto clave!"
-4. FLUJO NATURAL: Si el estudiante respondió una pregunta, evalúala y pasa suavemente al siguiente concepto.
+**ESTADO ACTUAL:** Conversación en curso en el Módulo ${moduleId}.
+**REGLAS DE CONTINUIDAD:** Coherencia total con el historial, refuerzo positivo variado y flujo natural hacia el siguiente concepto.
     `;
   }
 
   // Construir el system prompt personalizado completo
-  const personalizedSystemInstruction = `
+  currentSystemPrompt = `
 ${baseSystemPrompt}
 
 **PERFIL DEL ESTUDIANTE:**
@@ -96,41 +78,77 @@ ${baseSystemPrompt}
 - Nivel declarado: ${user.level}
 - XP actual: ${user.xp} (Rango: ${user.rank})
 - Módulo activo: ${moduleId}
-- Módulos completados: ${user.completedModules.join(", ") || "Ninguno aún"}
-- Badges obtenidos: ${user.badges.length > 0 ? user.badges.join(", ") : "Ninguno aún"}
 
 ${specificInstruction}
   `;
 
-  // Crear sesión de chat con historial
-  chatSession = ai.chats.create({
-    model: "gemini-3-flash-preview",
-    config: {
-      systemInstruction: personalizedSystemInstruction,
-      temperature: 0.7,
-    },
-    history: history
-  });
-
-  return chatSession;
+  return true;
 };
 
+/**
+ * Envía un mensaje a la API de Claude (Anthropic) usando fetch nativo.
+ * Se mantiene el nombre sendMessageToGemini para no romper importaciones existentes.
+ */
 export const sendMessageToGemini = async (
   text: string,
   currentMode: AppMode
 ): Promise<string> => {
-  if (!chatSession) {
-    throw new Error("Chat session not initialized");
+  const apiKey = import.meta.env.VITE_ANTHROPIC_API_KEY;
+  
+  if (!apiKey) {
+    console.error("VITE_ANTHROPIC_API_KEY is not defined");
+    return "Ocurrió un error de conexión con Dr. Medix. Por favor intenta de nuevo.";
   }
 
-  // Añadir contexto del modo activo al mensaje
+  // Añadir contexto del modo activo al mensaje y guardar historial
   const contextualizedMessage = `[MODO ACTUAL: ${currentMode}]\n${text}`;
+  conversationHistory.push({ role: 'user', content: contextualizedMessage });
+
+  // Time-out de 15 segundos
+  const controller = new AbortController();
+  const timeoutId = setTimeout(() => controller.abort(), 15000);
 
   try {
-    const response = await chatSession.sendMessage({ message: contextualizedMessage });
-    return response.text || "Lo siento, tuve un problema generando la respuesta.";
+    const response = await fetch(API_URL, {
+      method: "POST",
+      headers: {
+        "Content-Type": "application/json",
+        "x-api-key": apiKey,
+        "anthropic-version": "2023-06-01",
+        "anthropic-dangerous-direct-browser-access": "true"
+      },
+      body: JSON.stringify({
+        model: "claude-sonnet-4-5",
+        max_tokens: 1024,
+        system: currentSystemPrompt,
+        messages: conversationHistory,
+        temperature: 0.7
+      }),
+      signal: controller.signal
+    });
+
+    clearTimeout(timeoutId);
+
+    if (!response.ok) {
+      const errorBody = await response.text();
+      console.error(`Claude API Error (${response.status}): ${errorBody}`);
+      throw new Error(`API Error: ${response.status}`);
+    }
+
+    const data = await response.json();
+    const responseText = data.content?.[0]?.text || "Lo siento, tuve un problema generando la respuesta.";
+    
+    // Guardar respuesta en el historial
+    conversationHistory.push({ role: 'assistant', content: responseText });
+    
+    return responseText;
+
   } catch (error) {
-    console.error("Gemini API Error:", error);
+    clearTimeout(timeoutId);
+    if (error instanceof Error && error.name === 'AbortError') {
+      return "Dr. Medix está tardando más de lo esperado. Por favor intenta de nuevo.";
+    }
+    console.error("Claude API Error:", error);
     return "Ocurrió un error de conexión con Dr. Medix. Por favor intenta de nuevo.";
   }
 };

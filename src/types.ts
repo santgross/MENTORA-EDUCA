@@ -30,6 +30,8 @@ export interface UserProfile {
   streak: number;
   completedModules: number[];
   badges: string[];
+  completedQuizzes: string[];
+  lastActivity: string;
 }
 
 export interface ChatSession {

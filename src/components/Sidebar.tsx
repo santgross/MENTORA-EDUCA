@@ -1,6 +1,6 @@
 import React from 'react';
 import { UserProfile } from '../types';
-import { RANKS, MODULES, getUnlockedModuleIds } from '../constants';
+import { RANKS, MODULES, getUnlockedModuleIds, MODULE_XP_REQUIREMENTS } from '../constants';
 import { BookOpen, LogOut, Star, CheckCircle2, Lock, PlayCircle, Sparkles } from 'lucide-react';
 import { motion } from 'motion/react';
 
@@ -84,6 +84,9 @@ const Sidebar: React.FC<SidebarProps> = ({ user, activeModuleId, onLogout, onMod
             : isUnlocked  ? BookOpen
             : Lock;
 
+          const xpRequirement = MODULE_XP_REQUIREMENTS[module.id] || 0;
+          const missingXp = xpRequirement - user.xp;
+
           return (
             <button
               key={module.id}
@@ -114,7 +117,14 @@ const Sidebar: React.FC<SidebarProps> = ({ user, activeModuleId, onLogout, onMod
                 </div>
               </div>
 
-              {!isUnlocked && <Lock size={10} className="text-slate-700" />}
+              {!isUnlocked && (
+                <div className="flex flex-col items-end shrink-0">
+                  <Lock size={10} className="text-slate-700" />
+                  <span className="text-[7px] text-slate-600 font-black uppercase tracking-tighter">
+                    Falta {missingXp.toLocaleString()} XP
+                  </span>
+                </div>
+              )}
             </button>
           );
         })}

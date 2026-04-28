@@ -9,7 +9,7 @@ import { motion, AnimatePresence } from 'motion/react';
 interface ChatInterfaceProps {
   messages: Message[];
   setMessages: React.Dispatch<React.SetStateAction<Message[]>>;
-  onXPIncrease: () => void;
+  onXPIncrease: (options: { amount: number; activityId?: string }) => void;
   activeModuleId: number;
   userProfile: UserProfile;
 }
@@ -148,7 +148,9 @@ const MODE_PLACEHOLDER: Record<AppMode, string> = {
       const responseText = await sendMessageToGemini(userText, currentMode);
       const aiMsg: Message = { id: (Date.now()+1).toString(), role: 'model', text: responseText, timestamp: new Date() };
       setMessages(prev => [...prev, aiMsg]);
-      onXPIncrease();
+      
+      // Sumar 5 XP por interacción general con el Mentor
+      onXPIncrease({ amount: 5 });
     } catch (err) {
       console.error('Failed to send message', err);
     } finally {
@@ -236,7 +238,7 @@ const MODE_PLACEHOLDER: Record<AppMode, string> = {
         </div>
         <div className="hidden lg:flex items-center gap-6 text-[10px] font-bold tracking-[0.2em] text-white/60">
           <span className="flex items-center gap-2"><div className="w-1 h-1 bg-white/40 rounded-full" /> LATENCIA: 1.2S</span>
-          <span className="flex items-center gap-2"><div className="w-1 h-1 bg-white/40 rounded-full" /> MODELO: GEMINI 3.1 PRO</span>
+          <span className="flex items-center gap-2"><div className="w-1 h-1 bg-white/40 rounded-full" /> SISTEMA: ACTIVO</span>
         </div>
       </motion.div>
 
@@ -285,7 +287,13 @@ const MODE_PLACEHOLDER: Record<AppMode, string> = {
                                     key={pIdx} 
                                     data={widgetData} 
                                     onComplete={(success) => {
-                                      if (success) onXPIncrease();
+                                      if (success) {
+                                        // Sumar 25 XP al completar exitosamente un reto interactivo
+                                        onXPIncrease({ 
+                                          amount: 25, 
+                                          activityId: `widget_${activeModuleId}_${pIdx}_${Date.now()}` 
+                                        });
+                                      }
                                     }} 
                                   />
                                 );
@@ -305,7 +313,10 @@ const MODE_PLACEHOLDER: Record<AppMode, string> = {
                   
                   <div className={`flex items-center gap-4 px-1 ${msg.role === 'user' ? 'flex-row-reverse text-right' : 'flex-row'}`}>
                     <span className="text-[10px] font-black text-slate-800 uppercase tracking-[0.2em] opacity-40">
-                      {msg.timestamp.toLocaleTimeString([], { hour: '2-digit', minute: '2-digit' })}
+                      {(() => {
+                        const date = msg.timestamp instanceof Date ? msg.timestamp : new Date(msg.timestamp);
+                        return date.toLocaleTimeString([], { hour: '2-digit', minute: '2-digit' });
+                      })()}
                     </span>
                     {msg.role === 'model' && (
                       <button 

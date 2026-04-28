@@ -74,7 +74,20 @@ const Onboarding: React.FC<OnboardingProps> = ({ onComplete }) => {
     if (verificationCode === generatedCode || verificationCode === '000000') {
       if (name && level !== null && motivation && email && phone) {
         setVerificationError(false);
-        onComplete({ name, email, phone, level, motivation, xp: 0, rank: 'Aprendiz', streak: 1, completedModules: [], badges: [] });
+        onComplete({ 
+          name, 
+          email, 
+          phone, 
+          level, 
+          motivation, 
+          xp: 0, 
+          rank: 'Aprendiz', 
+          streak: 1, 
+          completedModules: [], 
+          badges: [],
+          completedQuizzes: [],
+          lastActivity: new Date().toISOString()
+        });
       }
     } else {
       setVerificationError(true);

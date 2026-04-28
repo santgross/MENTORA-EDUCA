@@ -11,7 +11,7 @@ import ModuleCareerPlan from './components/ModuleCareerPlan';
 import ModuleFieldProductivity from './components/ModuleFieldProductivity';
 import ModuleWellbeing from './components/ModuleWellbeing';
 import { UserProfile, Message } from './types';
-import { INITIAL_USER_PROFILE } from './constants';
+import { INITIAL_USER_PROFILE, RANKS } from './constants';
 import { motion, AnimatePresence } from 'motion/react';
 
 function App() {
@@ -36,12 +36,27 @@ function App() {
       const profile = JSON.parse(savedProfile);
       setUserProfile(profile);
       setIsOnboardingComplete(true);
-      // If module 0 is completed, set active module to 1 by default
+      
+      let initialModule = 0;
       if (profile.completedModules.includes(0)) {
-        setActiveModule(1);
+        initialModule = 1;
+      }
+      setActiveModule(initialModule);
+      
+      // Restaurar chat guardado para el módulo inicial
+      const savedMessages = localStorage.getItem(`dr_medix_chat_module_${initialModule}`);
+      if (savedMessages) {
+        setMessages(JSON.parse(savedMessages));
       }
     }
   }, []);
+
+  // Persistir mensajes cuando cambian, limitando a los últimos 50
+  useEffect(() => {
+    if (isOnboardingComplete && messages.length > 0) {
+      localStorage.setItem(`dr_medix_chat_module_${activeModule}`, JSON.stringify(messages.slice(-50)));
+    }
+  }, [messages, activeModule, isOnboardingComplete]);
 
   const handleOnboardingComplete = (profile: UserProfile) => {
     setUserProfile(profile);
@@ -50,6 +65,12 @@ function App() {
   };
 
   const handleLogout = () => {
+    // Borrar todos los chats guardados al cerrar sesión
+    Object.keys(localStorage).forEach(key => {
+      if (key.startsWith('dr_medix_chat_module_')) {
+        localStorage.removeItem(key);
+      }
+    });
     localStorage.removeItem('dr_medix_profile');
     setUserProfile(null);
     setIsOnboardingComplete(false);
@@ -57,10 +78,63 @@ function App() {
     setActiveModule(0);
   };
 
-  const handleXPIncrease = (amount: number = 10) => {
+  const handleXPIncrease = (options: { amount: number; activityId?: string }) => {
     if (!userProfile) return;
-    const newXP = userProfile.xp + amount;
-    const newProfile = { ...userProfile, xp: newXP };
+    
+    // Si hay activityId, verificar si ya se completó para evitar duplicar XP
+    if (options.activityId && userProfile.completedQuizzes.includes(options.activityId)) {
+      return;
+    }
+
+    const now = new Date();
+    const nowISO = now.toISOString();
+
+    // Cálculo de racha (streak) basado en lastActivity
+    let newStreak = userProfile.streak;
+    if (userProfile.lastActivity) {
+      const lastDate = new Date(userProfile.lastActivity);
+      
+      // Normalizar a fechas sin hora para comparar días
+      const lastDay = new Date(lastDate.getFullYear(), lastDate.getMonth(), lastDate.getDate());
+      const currentDay = new Date(now.getFullYear(), now.getMonth(), now.getDate());
+      
+      const diffTime = currentDay.getTime() - lastDay.getTime();
+      const diffDays = Math.floor(diffTime / (1000 * 3600 * 24));
+      
+      if (diffDays === 1) {
+        // Participó el día siguiente: aumenta racha
+        newStreak += 1;
+      } else if (diffDays > 1) {
+        // Pasó más de un día: racha vuelve a 1
+        newStreak = 1;
+      }
+      // Si diffDays === 0, ya participó hoy, la racha se mantiene
+    }
+
+    const newXP = userProfile.xp + options.amount;
+    
+    // Recalcular rango automáticamente según los límites definidos en constants.ts
+    let newRank = userProfile.rank;
+    const sortedRanks = [...RANKS].sort((a, b) => b.minXp - a.minXp);
+    const matchingRank = sortedRanks.find((r) => newXP >= r.minXp);
+    if (matchingRank) {
+      newRank = matchingRank.title;
+    }
+
+    // Registrar quiz o actividad si aplica
+    const newQuizzes = options.activityId 
+      ? [...userProfile.completedQuizzes, options.activityId] 
+      : userProfile.completedQuizzes;
+
+    const newProfile: UserProfile = { 
+      ...userProfile, 
+      xp: newXP, 
+      rank: newRank,
+      streak: newStreak,
+      completedQuizzes: newQuizzes,
+      lastActivity: nowISO
+    };
+
     setUserProfile(newProfile);
     localStorage.setItem('dr_medix_profile', JSON.stringify(newProfile));
   };
@@ -72,6 +146,19 @@ function App() {
   };
 
   const handleModuleChange = (id: number) => {
+    // Guardar chat actual antes de cambiar de módulo
+    if (messages.length > 0) {
+      localStorage.setItem(`dr_medix_chat_module_${activeModule}`, JSON.stringify(messages.slice(-50)));
+    }
+
+    // Cargar chat del nuevo módulo
+    const savedMessages = localStorage.getItem(`dr_medix_chat_module_${id}`);
+    if (savedMessages) {
+      setMessages(JSON.parse(savedMessages));
+    } else {
+      setMessages([]);
+    }
+
     setActiveModule(id);
     setIsSidebarOpen(false);
     if (id === 13 || id === 14 || id === 15 || id === 16 || id === 17 || id === 18 || id === 19) {
@@ -258,7 +345,7 @@ function App() {
                     activeModuleId={activeModule}
                     messages={messages}
                     setMessages={setMessages}
-                    onXPIncrease={() => handleXPIncrease(10)}
+                    onXPIncrease={(options) => handleXPIncrease(options)}
                     userProfile={userProfile || INITIAL_USER_PROFILE}
                   />
                 </motion.div>
