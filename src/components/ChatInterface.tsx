@@ -138,12 +138,34 @@ const LOADING_PHRASES = [
       .replace(/\[.*?\]/g,'').replace(/---/g,'')
       .replace(/[\u{1F600}-\u{1F64F}\u{1F300}-\u{1F5FF}\u{1F680}-\u{1F6FF}\u{1F1E0}-\u{1F1FF}]/gu, '');
     const utt = new SpeechSynthesisUtterance(clean);
-    const voice = availableVoices.find(v => v.lang === 'es-US')
-                || availableVoices.find(v => v.lang === 'es-MX')
-                || availableVoices.find(v => v.lang.startsWith('es'));
-    if (voice) utt.voice = voice;
-    utt.lang = voice ? voice.lang : 'es-ES';
-    utt.rate = 1.0; utt.pitch = 1.0;
+    
+    // Mejorar selección de voz para latino formal
+    const spanishMatchStrings = ["Microsoft Pablo", "Google español", "español", "Spanish", "es-", "es_"];
+    const maleMatchStrings = ["Male", "male", "Hombre", "hombre"];
+    
+    const spanishVoices = availableVoices.filter(v => 
+      spanishMatchStrings.some(match => v.name.includes(match) || v.lang.includes(match))
+    );
+    
+    let selectedVoice: SpeechSynthesisVoice | undefined = spanishVoices.find(v => 
+      maleMatchStrings.some(match => v.name.includes(match))
+    ) || spanishVoices[0];
+    
+    if (!selectedVoice) {
+      selectedVoice = availableVoices.find(v => 
+        maleMatchStrings.some(match => v.name.includes(match))
+      );
+    }
+
+    if (selectedVoice) utt.voice = selectedVoice;
+    utt.lang = selectedVoice ? selectedVoice.lang : 'es-ES';
+    
+    console.log('Voz seleccionada:', selectedVoice?.name, selectedVoice?.lang);
+
+    utt.rate = 0.85; // Velocidad formal y clara
+    utt.pitch = 0.9; // Tono más grave/masculino
+    utt.volume = 1.0;
+    
     utt.onstart = () => setIsSpeaking(messageId);
     utt.onend   = () => setIsSpeaking(null);
     utt.onerror = () => setIsSpeaking(null);
@@ -388,7 +410,7 @@ const LOADING_PHRASES = [
                       <button 
                         onClick={() => speakText(msg.text, msg.id)}
                         className={`hover:text-medical-500 transition-colors p-1 rounded-md hover:bg-white/5 ${isSpeaking === msg.id ? 'text-medical-500' : 'text-slate-800'}`}
-                        title="Escuchar respuesta"
+                        title="Escuchar respuesta del Dr. Medix"
                       >
                         {isSpeaking === msg.id ? <StopCircle size={14} /> : <Volume2 size={14} />}
                       </button>
