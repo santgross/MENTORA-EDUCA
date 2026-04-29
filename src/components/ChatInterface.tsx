@@ -330,6 +330,52 @@ const LOADING_PHRASES = [
         </div>
       </motion.div>
 
+      {/* ── Module Progress Bar ── */}
+      {(() => {
+        const msgCount = messages.length;
+        let progress = 0;
+        if (msgCount === 0) progress = 0;
+        else if (msgCount <= 5) progress = (msgCount / 5) * 25;
+        else if (msgCount <= 10) progress = 25 + ((msgCount - 5) / 5) * 25;
+        else if (msgCount <= 20) progress = 50 + ((msgCount - 10) / 10) * 25;
+        else if (msgCount <= 30) progress = 75 + ((msgCount - 20) / 10) * 25;
+        else progress = 100;
+
+        let motivation = "";
+        if (progress <= 25) motivation = "Iniciando módulo...";
+        else if (progress <= 50) motivation = "Buen avance, sigue así";
+        else if (progress <= 75) motivation = "Más de la mitad completado";
+        else if (progress < 100) motivation = "¡Casi terminas este módulo!";
+        else motivation = "¡Módulo dominado!";
+
+        return (
+          <motion.div 
+            initial={{ opacity: 0, height: 0 }}
+            animate={{ opacity: 1, height: 'auto' }}
+            className="bg-[#05070A]/80 border-b border-white/5 px-4 sm:px-8 py-2 flex items-center justify-between shrink-0 z-20"
+          >
+            <div className="flex items-center gap-3">
+              <span className="text-[9px] font-black text-slate-500 uppercase tracking-widest min-w-fit">
+                Módulo {activeModuleId} • {msgCount} Msgs
+              </span>
+            </div>
+            
+            <div className="flex-1 max-w-[300px] h-1 bg-white/5 rounded-full mx-6 overflow-hidden relative">
+              <motion.div 
+                initial={{ width: 0 }}
+                animate={{ width: `${progress}%` }}
+                transition={{ duration: 1, ease: "easeOut" }}
+                className="absolute inset-y-0 left-0 bg-medical-500 shadow-[0_0_8px_rgba(16,185,129,0.4)]"
+              />
+            </div>
+
+            <span className="text-[9px] font-black text-medical-500 uppercase tracking-widest">
+              {motivation}
+            </span>
+          </motion.div>
+        );
+      })()}
+
       {/* ── Chat Canvas ── */}
       <div 
         ref={scrollRef}
