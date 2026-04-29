@@ -311,9 +311,9 @@ const LOADING_PHRASES = [
       {/* ── Chat Canvas ── */}
       <div 
         ref={scrollRef}
-        className="flex-1 overflow-y-auto custom-scrollbar pt-8 pb-48 px-6 sm:px-8 lg:px-12 relative z-10 scroll-smooth"
+        className="flex-1 overflow-y-auto custom-scrollbar pt-4 pb-6 px-4 sm:px-8 lg:px-12 relative z-10 scroll-smooth"
       >
-        <div className="max-w-3xl mx-auto w-full space-y-16">
+        <div className="max-w-3xl mx-auto w-full space-y-8">
           <AnimatePresence initial={false}>
             {messages.map((msg, idx) => (
               <motion.div
@@ -336,10 +336,10 @@ const LOADING_PHRASES = [
                 <div className={`max-w-[90%] sm:max-w-[85%] lg:max-w-[70%] flex-1 space-y-4 ${msg.role === 'user' ? 'items-end' : 'items-start'}`}>
                   <div className={`transition-all duration-500 shadow-sm ${
                     msg.role === 'user'
-                      ? 'p-5 sm:p-6 rounded-[2rem] rounded-tr-none bg-medical-500/10 text-white border border-medical-500/20 shadow-xl shadow-medical-500/5 ml-auto text-right'
-                      : 'text-slate-200 bg-white/[0.03] border border-white/5 p-5 sm:p-6 rounded-[2rem] rounded-tl-none mr-auto'
+                      ? 'p-4 sm:p-5 rounded-2xl rounded-tr-none bg-medical-500/10 text-white border border-medical-500/20 shadow-xl shadow-medical-500/5 ml-auto text-right'
+                      : 'text-slate-200 bg-white/[0.03] border border-white/5 p-4 sm:p-5 rounded-2xl rounded-tl-none mr-auto'
                   }`}>
-                    <div className={msg.role === 'model' ? "markdown-body text-[16px] sm:text-[17px] lg:text-[18px] leading-[1.7] sm:leading-[1.8] text-slate-200 font-normal tracking-tight text-left hyphens-auto" : "text-[15px] sm:text-[16px] leading-relaxed font-medium"}>
+                    <div className={msg.role === 'model' ? "markdown-body text-[16px] sm:text-[17px] leading-[1.6] sm:leading-[1.7] text-slate-200 font-normal tracking-tight text-left hyphens-auto" : "text-[15px] sm:text-[16px] leading-relaxed font-medium"}>
                       {msg.role === 'model' ? (
                         <>
                           {msg.text.split(/(\[WIDGET:\s*\{[\s\S]*?\}\s*\])/).map((part, pIdx) => {
@@ -440,35 +440,29 @@ const LOADING_PHRASES = [
         </div>
       </div>
 
-      {/* ── Claude-style Centered Fixed Input ── */}
-      <div className="absolute bottom-0 left-0 right-0 h-64 pointer-events-none z-20 bg-gradient-to-t from-[#020408] via-[#020408]/95 to-transparent" />
-      
-      <div className="absolute bottom-0 left-0 right-0 p-4 sm:pb-12 sm:px-8 z-30 pointer-events-none">
-        <div className="max-w-4xl mx-auto w-full pointer-events-auto">
+      {/* ── Fixed Input Area ── */}
+      <div className="shrink-0 border-t border-white/5 bg-[#020408]/80 backdrop-blur-xl p-4 sm:p-6 z-30">
+        <div className="max-w-3xl mx-auto w-full">
           <div className="relative group">
             {/* Ambient Background Focus Glow */}
-            <div className="absolute -inset-2 bg-medical-500/10 rounded-[3rem] blur-3xl opacity-0 group-focus-within:opacity-100 transition-opacity duration-1000" />
+            <div className="absolute -inset-2 bg-medical-500/10 rounded-[2.5rem] blur-2xl opacity-0 group-focus-within:opacity-100 transition-opacity duration-1000" />
             
-            <div className="relative bg-[#0A1018] border border-white/10 rounded-[2.5rem] shadow-[0_32px_64px_-12px_rgba(0,0,0,0.8)] p-2 sm:p-3 focus-within:border-medical-500/50 transition-all duration-500">
+            <div className="relative bg-[#0A1018] border border-white/10 rounded-[2rem] shadow-2xl p-1.5 focus-within:border-medical-500/50 transition-all duration-500">
               <textarea
                 ref={textareaRef}
                 value={input}
                 onChange={handleTextareaInput}
                 onKeyDown={handleKeyDown}
                 placeholder={MODE_PLACEHOLDER[currentMode]}
-                className="w-full bg-transparent border-none focus:ring-0 p-4 sm:p-5 text-white placeholder:text-slate-800 resize-none max-h-48 custom-scrollbar text-[15px] sm:text-[17px] font-medium leading-[1.6]"
+                className="w-full bg-transparent border-none focus:ring-0 px-4 py-3 sm:p-4 text-white placeholder:text-slate-700 resize-none max-h-32 custom-scrollbar text-[15px] sm:text-[16px] font-medium leading-normal"
                 rows={1}
               />
               
-              <div className="flex items-center justify-between px-6 pb-4">
-                <div className="flex items-center gap-8">
-                  <div className="flex items-center gap-2.5">
+              <div className="flex items-center justify-between px-4 pb-2">
+                <div className="flex items-center gap-4">
+                  <div className="flex items-center gap-2">
                     <div className="w-1.5 h-1.5 rounded-full bg-medical-500 animate-pulse" />
-                    <span className="text-[10px] font-black text-slate-600 uppercase tracking-[0.25em] block">SISTEMA ACTIVO</span>
-                  </div>
-                  <div className="h-4 w-px bg-white/5 hidden sm:block" />
-                  <div className="flex items-center gap-2 group/mod">
-                    <span className="text-[10px] font-black text-slate-800 uppercase tracking-[0.25em]">MÓDULO {activeModuleId}</span>
+                    <span className="text-[9px] font-black text-slate-600 uppercase tracking-widest hidden sm:block">SISTEMA ACTIVO</span>
                   </div>
                 </div>
 
