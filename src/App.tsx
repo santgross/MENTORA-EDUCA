@@ -4,6 +4,7 @@ import Sidebar from './components/Sidebar';
 import ChatInterface from './components/ChatInterface';
 import Onboarding from './components/Onboarding';
 import ModuleZero from './components/ModuleZero';
+import ModuleIntro from './components/ModuleIntro';
 import ModuleEmotionalIntelligence from './components/ModuleEmotionalIntelligence';
 import ModulePersonalBrand from './components/ModulePersonalBrand';
 import ModuleResilience from './components/ModuleResilience';
@@ -15,6 +16,96 @@ import { UserProfile, Message } from './types';
 import { INITIAL_USER_PROFILE, RANKS } from './constants';
 import { motion, AnimatePresence } from 'motion/react';
 
+interface ModuleConfig {
+  title: string;
+  subtitle: string;
+  duration: string;
+  xpReward: number;
+  objectives: string[];
+  prerequisite?: string;
+}
+
+const CORE_MODULES_CONFIG: Record<number, ModuleConfig> = {
+  1: {
+    title: "Ecosistema Farmacéutico EC",
+    subtitle: "Fundamentos del sector en Ecuador",
+    duration: "1 semana",
+    xpReward: 200,
+    objectives: ["Comprender el sistema de salud ecuatoriano", "Identificar actores clave del ecosistema", "Conocer la normativa ARCSA y MSP"]
+  },
+  7: {
+    title: "Normativa ARCSA/MSP",
+    subtitle: "Regulación y Control Sanitario",
+    duration: "1 semana",
+    xpReward: 300,
+    objectives: ["Dominar la regulación farmacéutica", "Entender registros sanitarios", "Aplicar el Código de Ética COÉTICA"],
+    prerequisite: "M1 completado"
+  },
+  8: {
+    title: "Farmacovigilancia y Ética",
+    subtitle: "Seguridad del paciente y cumplimiento",
+    duration: "1 semana",
+    xpReward: 300,
+    objectives: ["Reportar eventos adversos correctamente", "Aplicar principios éticos en campo", "Conocer sanciones y responsabilidades"]
+  },
+  2: {
+    title: "Anatomía y Fisiología",
+    subtitle: "Bases biológicas para el visitador",
+    duration: "1 semana",
+    xpReward: 400,
+    objectives: ["Comprender sistemas del cuerpo humano", "Relacionar fisiología con farmacología", "Hablar el lenguaje técnico del médico"]
+  },
+  3: {
+    title: "Farmacología Estratégica",
+    subtitle: "Ciencia aplicada a la prescripción",
+    duration: "1 semana",
+    xpReward: 500,
+    objectives: ["Dominar mecanismos de acción", "Interpretar fichas técnicas", "Posicionar productos con evidencia"]
+  },
+  13: {
+    title: "Inteligencia Emocional",
+    subtitle: "Habilidades blandas para el éxito",
+    duration: "1 semana",
+    xpReward: 400,
+    objectives: ["Desarrollar autoconciencia emocional", "Gestionar emociones bajo presión", "Construir rapport con médicos"]
+  },
+  4: {
+    title: "Psicología de la Persuasión",
+    subtitle: "Entendiendo el comportamiento médico",
+    duration: "1 semana",
+    xpReward: 500,
+    objectives: ["Aplicar perfiles DISC", "Adaptar el mensaje al médico", "Técnicas de influencia ética"]
+  },
+  5: {
+    title: "Ciclo de Venta Consultiva",
+    subtitle: "Metodología ACAE de alto impacto",
+    duration: "1 semana",
+    xpReward: 600,
+    objectives: ["Dominar el modelo ACAE", "Ejecutar visitas médicas efectivas", "Cerrar compromisos de prescripción"]
+  },
+  6: {
+    title: "Manejo de Objeciones",
+    subtitle: "Convirtiendo barreras en alianzas",
+    duration: "1 semana",
+    xpReward: 600,
+    objectives: ["Anticipar objeciones del médico", "Responder con evidencia científica", "Convertir objeciones en oportunidades"]
+  },
+  9: {
+    title: "Simulaciones Alta Fidelidad",
+    subtitle: "Entrenamiento inmersivo con IA",
+    duration: "2 semanas",
+    xpReward: 800,
+    objectives: ["Practicar visitas médicas reales", "Recibir feedback inmediato de IA", "Perfeccionar técnica bajo presión"]
+  },
+  10: {
+    title: "Proyecto y Certificación",
+    subtitle: "Validación de competencias profesionales",
+    duration: "2 semanas",
+    xpReward: 1000,
+    objectives: ["Desarrollar proyecto integrador real", "Aprobar evaluación certificable", "Obtener certificado profesional"]
+  }
+};
+
 function App() {
   const [userProfile, setUserProfile] = useState<UserProfile | null>(null);
   const [activeModule, setActiveModule] = useState<number>(0);
@@ -23,6 +114,18 @@ function App() {
   const [showLanding, setShowLanding] = useState(true);
   const [isSidebarOpen, setIsSidebarOpen] = useState(false);
   const [moduleIntroStates, setModuleIntroStates] = useState<Record<number, boolean>>({
+    1: false,
+    2: false,
+    3: false,
+    4: false,
+    5: false,
+    6: false,
+    7: false,
+    8: false,
+    9: false,
+    10: false,
+    11: false,
+    12: false,
     13: false,
     14: false,
     15: false,
@@ -176,7 +279,7 @@ function App() {
 
     setActiveModule(id);
     setIsSidebarOpen(false);
-    if (id === 13 || id === 14 || id === 15 || id === 16 || id === 17 || id === 18 || id === 19) {
+    if (id >= 1 && id <= 19) {
       setModuleIntroStates(prev => ({ ...prev, [id]: false }));
     }
   };
@@ -280,6 +383,25 @@ function App() {
                   className="flex-1 flex flex-col"
                 >
                   <ModuleZero user={userProfile} onComplete={handleModuleZeroComplete} />
+                </motion.div>
+              ) : CORE_MODULES_CONFIG[activeModule] && !moduleIntroStates[activeModule] ? (
+                <motion.div
+                  key={`module-${activeModule}-intro`}
+                  initial={{ opacity: 0 }}
+                  animate={{ opacity: 1 }}
+                  exit={{ opacity: 0 }}
+                  className="flex-1 flex flex-col h-full"
+                >
+                  <ModuleIntro 
+                    moduleId={activeModule}
+                    moduleTitle={CORE_MODULES_CONFIG[activeModule].title}
+                    moduleSubtitle={CORE_MODULES_CONFIG[activeModule].subtitle}
+                    duration={CORE_MODULES_CONFIG[activeModule].duration}
+                    xpReward={CORE_MODULES_CONFIG[activeModule].xpReward}
+                    objectives={CORE_MODULES_CONFIG[activeModule].objectives}
+                    prerequisite={CORE_MODULES_CONFIG[activeModule].prerequisite}
+                    onStartChat={() => setModuleIntroStates(prev => ({ ...prev, [activeModule]: true }))}
+                  />
                 </motion.div>
               ) : activeModule === 13 && !moduleIntroStates[13] ? (
                 <motion.div
