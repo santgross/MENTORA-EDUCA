@@ -24,70 +24,70 @@ const ModuleIntro: React.FC<ModuleIntroProps> = ({
   onStartChat
 }) => {
   return (
-    <div className="flex-1 flex flex-col items-center justify-center p-6 bg-[#05070A] relative overflow-hidden">
+    <div className="flex-1 flex flex-col items-center justify-center p-4 sm:p-6 bg-[#05070A] relative overflow-hidden h-full">
       {/* Decorative background elements */}
       <div className="absolute top-[-10%] left-[-10%] w-[40%] h-[40%] bg-medical-500/10 rounded-full blur-[120px] pointer-events-none" />
       <div className="absolute bottom-[-10%] right-[-10%] w-[40%] h-[40%] bg-blue-500/10 rounded-full blur-[120px] pointer-events-none" />
 
       <motion.div
-        initial={{ opacity: 0, y: 20 }}
+        initial={{ opacity: 0, y: 15 }}
         animate={{ opacity: 1, y: 0 }}
-        className="max-w-3xl w-full z-10"
+        className="max-w-xl w-full z-10 flex flex-col items-center"
       >
         {/* Module Header */}
-        <div className="text-center mb-10">
+        <div className="text-center mb-6">
           <motion.div
             initial={{ scale: 0.9, opacity: 0 }}
             animate={{ scale: 1, opacity: 1 }}
-            className="inline-block px-4 py-1.5 rounded-full bg-medical-500/10 border border-medical-500/20 text-medical-400 text-xs font-bold uppercase tracking-widest mb-6"
+            className="text-medical-400 text-sm font-bold uppercase tracking-widest mb-1.5"
           >
             Módulo {moduleId}
           </motion.div>
           
-          <h1 className="text-4xl md:text-5xl font-black text-white tracking-tighter mb-4 uppercase">
+          <h1 className="text-3xl md:text-4xl font-bold text-white tracking-tight leading-tight mb-2 uppercase px-2">
             {moduleTitle}
           </h1>
-          <p className="text-xl text-slate-400 font-medium tracking-tight">
+          <p className="text-base text-slate-400 font-medium tracking-tight px-4">
             {moduleSubtitle}
           </p>
         </div>
 
         {/* Stats Row */}
-        <div className="flex flex-wrap justify-center gap-4 mb-10">
-          <div className="flex items-center gap-2 px-4 py-2 bg-white/5 rounded-2xl border border-white/10">
-            <Clock className="w-4 h-4 text-slate-500" />
-            <span className="text-sm font-bold text-slate-300">{duration}</span>
+        <div className="flex flex-wrap justify-center gap-3 mb-6">
+          <div className="flex items-center gap-1.5 px-3 py-1.5 bg-white/5 rounded-xl border border-white/10">
+            <Clock className="w-3.5 h-3.5 text-slate-500" />
+            <span className="text-xs font-bold text-slate-300">{duration}</span>
           </div>
-          <div className="flex items-center gap-2 px-4 py-2 bg-medical-500/10 rounded-2xl border border-medical-500/20">
-            <Trophy className="w-4 h-4 text-medical-500" />
-            <span className="text-sm font-bold text-medical-500">+{xpReward} XP</span>
+          <div className="flex items-center gap-1.5 px-3 py-1.5 bg-medical-500/10 rounded-xl border border-medical-500/20">
+            <Trophy className="w-3.5 h-3.5 text-medical-500" />
+            <span className="text-xs font-bold text-medical-500">+{xpReward} XP</span>
           </div>
           {prerequisite && (
-            <div className="flex items-center gap-2 px-4 py-2 bg-amber-500/10 rounded-2xl border border-amber-500/20">
-              <ShieldCheck className="w-4 h-4 text-amber-500" />
-              <span className="text-sm font-bold text-amber-500">Prerrequisito: {prerequisite}</span>
+            <div className="flex items-center gap-1.5 px-3 py-1.5 bg-amber-500/10 rounded-xl border border-amber-500/20">
+              <ShieldCheck className="w-3.5 h-3.5 text-amber-500" />
+              <span className="text-xs font-bold text-amber-500">{prerequisite}</span>
             </div>
           )}
         </div>
 
-        {/* Learning Objectives */}
-        <div className="bg-white/[0.03] border border-white/10 rounded-[2rem] p-8 md:p-10 mb-10 shadow-2xl">
-          <h3 className="text-lg font-bold text-white mb-6 flex items-center gap-2">
+        {/* Learning Objectives Box */}
+        <div className="bg-white/[0.03] border border-white/10 rounded-3xl p-6 md:p-8 mb-8 w-full shadow-2xl max-w-lg">
+          <h3 className="text-[10px] font-black text-slate-500 uppercase tracking-widest mb-5 flex items-center justify-center gap-2">
             Objetivos de Aprendizaje
           </h3>
-          <div className="space-y-6">
+          <div className="space-y-4">
             {objectives.map((obj, i) => (
               <motion.div
                 key={i}
-                initial={{ opacity: 0, x: -10 }}
+                initial={{ opacity: 0, x: -5 }}
                 animate={{ opacity: 1, x: 0 }}
-                transition={{ delay: 0.2 + i * 0.1 }}
-                className="flex items-start gap-4 group"
+                transition={{ delay: 0.1 + i * 0.05 }}
+                className="flex items-start gap-3 group"
               >
-                <div className="mt-1 shrink-0 bg-medical-500/20 p-1.5 rounded-lg group-hover:bg-medical-500/30 transition-colors">
-                  <CheckCircle2 className="w-4 h-4 text-medical-500" />
+                <div className="mt-0.5 shrink-0 bg-medical-500/20 p-1 rounded-md group-hover:bg-medical-500/30 transition-colors">
+                  <CheckCircle2 className="w-3.5 h-3.5 text-medical-500" />
                 </div>
-                <p className="text-slate-300 font-medium leading-relaxed">
+                <p className="text-slate-300 text-sm font-medium leading-relaxed text-left">
                   {obj}
                 </p>
               </motion.div>
@@ -96,19 +96,19 @@ const ModuleIntro: React.FC<ModuleIntroProps> = ({
         </div>
 
         {/* Action Button */}
-        <div className="flex justify-center">
+        <div className="flex justify-center w-full">
           <button
             onClick={onStartChat}
-            className="group relative px-10 py-5 bg-medical-500 hover:bg-medical-400 text-white font-black rounded-2xl flex items-center gap-3 transition-all transform hover:scale-105 active:scale-95 shadow-xl shadow-medical-500/20"
+            className="group relative px-8 py-4 bg-medical-500 hover:bg-medical-400 text-white font-black text-sm rounded-xl flex items-center gap-2 transition-all transform hover:scale-105 active:scale-95 shadow-xl shadow-medical-500/20"
           >
             Iniciar Módulo con Dr. Medix
-            <ArrowRight className="w-5 h-5 group-hover:translate-x-1 transition-transform" />
+            <ArrowRight className="w-4 h-4 group-hover:translate-x-1 transition-transform" />
           </button>
         </div>
 
         {/* Disclaimer/Footer */}
-        <p className="text-center mt-12 text-slate-600 text-[10px] font-bold uppercase tracking-widest">
-          Experiencia de aprendizaje guiada por Inteligencia Artificial
+        <p className="text-center mt-8 text-slate-700 text-[9px] font-black uppercase tracking-[0.2em]">
+          Mentor IA Especializado
         </p>
       </motion.div>
     </div>
