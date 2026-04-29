@@ -28,6 +28,13 @@ const MODE_PLACEHOLDER: Record<AppMode, string> = {
   [AppMode.MENTOR]:    'Comparte un resto de carrera y pide consejo al Mentor...',
 };
 
+const LOADING_PHRASES = [
+  "Cargando contenido especializado del módulo...",
+  "Preparando tu mentor IA personalizado...",
+  "Configurando el contexto ecuatoriano...",
+  "Listo para guiarte paso a paso..."
+];
+
   const ChatInterface: React.FC<ChatInterfaceProps> = ({ messages, setMessages, onXPIncrease, activeModuleId, userProfile }) => {
   const [input, setInput] = useState('');
   const [isLoading, setIsLoading] = useState(false);
@@ -35,6 +42,7 @@ const MODE_PLACEHOLDER: Record<AppMode, string> = {
   const [isSpeaking, setIsSpeaking] = useState<string | null>(null);
   const [availableVoices, setAvailableVoices] = useState<SpeechSynthesisVoice[]>([]);
   const [hoveredMode, setHoveredMode] = useState<AppMode | null>(null);
+  const [loadingPhraseIdx, setLoadingPhraseIdx] = useState(0);
 
   const scrollRef = useRef<HTMLDivElement>(null);
   const messagesEndRef = useRef<HTMLDivElement>(null);
@@ -47,6 +55,15 @@ const MODE_PLACEHOLDER: Record<AppMode, string> = {
       scrollRef.current.scrollTop = scrollRef.current.scrollHeight;
     }
   };
+
+  useEffect(() => {
+    if (isLoading && messages.length === 0) {
+      const interval = setInterval(() => {
+        setLoadingPhraseIdx((prev) => (prev + 1) % LOADING_PHRASES.length);
+      }, 2000);
+      return () => clearInterval(interval);
+    }
+  }, [isLoading, messages.length]);
 
   useEffect(() => {
     const init = async () => {
@@ -173,6 +190,55 @@ const MODE_PLACEHOLDER: Record<AppMode, string> = {
 
   return (
     <div className="flex-1 flex flex-col h-full bg-[#020408] relative overflow-hidden">
+      <AnimatePresence>
+        {isLoading && messages.length === 0 && (
+          <motion.div
+            initial={{ opacity: 0 }}
+            animate={{ opacity: 1 }}
+            exit={{ opacity: 0 }}
+            className="absolute inset-0 z-[100] bg-[#05070A] flex flex-col items-center justify-center p-6"
+          >
+            <div className="max-w-md w-full flex flex-col items-center text-center">
+              <motion.div
+                animate={{ 
+                  scale: [1, 1.1, 1],
+                  rotate: [0, 5, -5, 0]
+                }}
+                transition={{ duration: 4, repeat: Infinity, ease: "easeInOut" }}
+                className="w-20 h-20 rounded-2xl bg-medical-500 flex items-center justify-center text-white shadow-2xl shadow-medical-500/20 mb-8 border border-white/10"
+              >
+                <svg xmlns="http://www.w3.org/2000/svg" width="40" height="40" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2.5" strokeLinecap="round" strokeLinejoin="round"><path d="M11 2a2 2 0 0 0-2 2v5H4a2 2 0 0 0-2 2v2c0 1.1.9 2 2 2h5v5c0 1.1.9 2 2 2h2a2 2 0 0 0 2-2v-5h5a2 2 0 0 0 2-2v-2a2 2 0 0 0-2-2h-5V4a2 2 0 0 0-2-2h-2z"/></svg>
+              </motion.div>
+
+              <h2 className="text-2xl font-black text-white tracking-tight mb-2 uppercase">Dr. Medix está preparando el módulo...</h2>
+              
+              <div className="h-6 overflow-hidden mb-10 w-full">
+                <AnimatePresence mode="wait">
+                  <motion.p
+                    key={loadingPhraseIdx}
+                    initial={{ y: 20, opacity: 0 }}
+                    animate={{ y: 0, opacity: 1 }}
+                    exit={{ y: -20, opacity: 0 }}
+                    className="text-slate-500 text-sm font-medium italic"
+                  >
+                    {LOADING_PHRASES[loadingPhraseIdx]}
+                  </motion.p>
+                </AnimatePresence>
+              </div>
+
+              <div className="w-full h-1.5 bg-white/5 rounded-full overflow-hidden relative">
+                <motion.div
+                  initial={{ x: "-100%" }}
+                  animate={{ x: "100%" }}
+                  transition={{ duration: 2, repeat: Infinity, ease: "linear" }}
+                  className="absolute inset-0 w-full h-full bg-gradient-to-r from-transparent via-medical-500 to-transparent"
+                />
+              </div>
+            </div>
+          </motion.div>
+        )}
+      </AnimatePresence>
+
       {/* Decorative Background Elements */}
       <div className="absolute top-0 right-0 w-[500px] h-[500px] bg-medical-500/5 rounded-full blur-[120px] -mr-32 -mt-32 pointer-events-none" />
       <div className="absolute bottom-0 left-0 w-[500px] h-[500px] bg-blue-500/5 rounded-full blur-[120px] -ml-32 -mb-32 pointer-events-none" />
@@ -354,7 +420,7 @@ const MODE_PLACEHOLDER: Record<AppMode, string> = {
             </motion.div>
           )}
 
-          {isLoading && (
+          {isLoading && messages.length > 0 && (
             <motion.div
               initial={{ opacity: 0, y: 10 }}
               animate={{ opacity: 1, y: 0 }}
