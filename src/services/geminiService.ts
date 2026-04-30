@@ -1,8 +1,8 @@
 import { getSystemPromptForModule } from "../constants";
 import { UserProfile, AppMode, Message } from "../types";
 
+// Apunta al proxy seguro de Vercel — la API key nunca sale del servidor
 const API_URL = '/api/chat';
-const API_URL = 'https://api.anthropic.com/v1/messages';
 
 // Variables persistentes en memoria para manejar la sesión de Claude
 let currentSystemPrompt: string = "";
@@ -20,7 +20,6 @@ export const getActiveModuleId = (user: UserProfile): number => {
 
 /**
  * Inicializa la sesión de chat configurando el system prompt y el historial
- * Mantiene la firma para compatibilidad con el resto de la aplicación.
  */
 export const initializeChat = async (
   user: UserProfile,
@@ -30,7 +29,7 @@ export const initializeChat = async (
   const moduleId = activeModuleId ?? getActiveModuleId(user);
   const baseSystemPrompt = getSystemPromptForModule(moduleId);
 
-  // Cargar historial en el formato de Claude (assistant en lugar de model)
+  // Cargar historial en el formato de Claude
   conversationHistory = previousMessages.map(msg => ({
     role: msg.role === 'user' ? 'user' : 'assistant',
     content: msg.text
@@ -85,33 +84,27 @@ ${specificInstruction}
 };
 
 /**
- * Envía un mensaje a la API de Claude (Anthropic) usando fetch nativo.
+ * Envía un mensaje a través del proxy seguro de Vercel hacia Claude.
  * Se mantiene el nombre sendMessageToGemini para no romper importaciones existentes.
  */
 export const sendMessageToGemini = async (
   text: string,
   currentMode: AppMode
 ): Promise<string> => {
-  const apiKey = import.meta.env.VITE_ANTHROPIC_API_KEY;
-  
-  if (!apiKey) {
-    console.error("VITE_ANTHROPIC_API_KEY is not defined");
-    return "Ocurrió un error de conexión con Dr. Medix. Por favor intenta de nuevo.";
-  }
 
-  // Añadir contexto del modo activo al mensaje y guardar historial
+  // Añadir contexto del modo activo al mensaje y guardar en historial
   const contextualizedMessage = `[MODO ACTUAL: ${currentMode}]\n${text}`;
   conversationHistory.push({ role: 'user', content: contextualizedMessage });
 
   // Truncar el system prompt si es demasiado extenso.
-  // 12.000 chars (~3.430 tokens) — permite que Claude vea instrucciones de
-  // gamificación, misiones y casos clínicos que antes quedaban fuera con 8.000.
+  // 12.000 chars (~3.430 tokens) — Claude ve instrucciones de gamificación,
+  // misiones y casos clínicos que antes quedaban fuera con 8.000.
   let finalSystemPrompt = currentSystemPrompt;
   if (finalSystemPrompt.length > 12000) {
     finalSystemPrompt = finalSystemPrompt.substring(0, 12000) + "\n\n[Contexto adicional disponible bajo demanda]";
   }
 
-  // Diagnóstico de carga
+  // Diagnóstico de carga (visible en logs de Vercel)
   console.log('Enviando a Claude — longitud system prompt:', finalSystemPrompt.length);
   console.log('Enviando a Claude — mensajes en historial:', conversationHistory.length);
 
@@ -121,18 +114,16 @@ export const sendMessageToGemini = async (
 
   try {
     const response = await fetch(API_URL, {
-      method: "POST",
+      method: 'POST',
       headers: {
-        "Content-Type": "application/json",
-        "x-api-key": apiKey,
-        "anthropic-version": "2023-06-01",
-        "anthropic-dangerous-direct-browser-access": "true"
+        'Content-Type': 'application/json',
+        // Sin API key aquí — el proxy la maneja de forma segura en el servidor
       },
       body: JSON.stringify({
-        model: "claude-haiku-4-5-20251001",
-        max_tokens: 1000,                          // era 800 — evita cortar simulaciones y explicaciones largas
+        model: 'claude-haiku-4-5-20251001',
+        max_tokens: 1000,                          // Evita cortar simulaciones y explicaciones largas
         system: finalSystemPrompt,
-        messages: conversationHistory.slice(-20),  // máx 20 msgs (~4.000 tokens historial) — cubre sesiones normales y simulaciones completas
+        messages: conversationHistory.slice(-20),  // Máx 20 msgs (~4.000 tokens) — cubre sesiones normales y simulaciones
         temperature: 0.7
       }),
       signal: controller.signal
@@ -148,10 +139,10 @@ export const sendMessageToGemini = async (
 
     const data = await response.json();
     const responseText = data.content?.[0]?.text || "Lo siento, tuve un problema generando la respuesta.";
-    
+
     // Guardar respuesta en el historial
     conversationHistory.push({ role: 'assistant', content: responseText });
-    
+
     return responseText;
 
   } catch (error) {
