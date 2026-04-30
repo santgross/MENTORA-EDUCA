@@ -1,4 +1,3 @@
-
 import { getSystemPromptForModule } from "../constants";
 import { UserProfile, AppMode, Message } from "../types";
 
@@ -104,10 +103,12 @@ export const sendMessageToGemini = async (
   const contextualizedMessage = `[MODO ACTUAL: ${currentMode}]\n${text}`;
   conversationHistory.push({ role: 'user', content: contextualizedMessage });
 
-  // Truncar el system prompt si es demasiado extenso (máx 8000 caracteres)
+  // Truncar el system prompt si es demasiado extenso.
+  // 12.000 chars (~3.430 tokens) — permite que Claude vea instrucciones de
+  // gamificación, misiones y casos clínicos que antes quedaban fuera con 8.000.
   let finalSystemPrompt = currentSystemPrompt;
-  if (finalSystemPrompt.length > 8000) {
-    finalSystemPrompt = finalSystemPrompt.substring(0, 8000) + "\n\n[Contexto adicional disponible bajo demanda]";
+  if (finalSystemPrompt.length > 12000) {
+    finalSystemPrompt = finalSystemPrompt.substring(0, 12000) + "\n\n[Contexto adicional disponible bajo demanda]";
   }
 
   // Diagnóstico de carga
@@ -129,9 +130,9 @@ export const sendMessageToGemini = async (
       },
       body: JSON.stringify({
         model: "claude-haiku-4-5-20251001",
-        max_tokens: 800,
+        max_tokens: 1000,                          // era 800 — evita cortar simulaciones y explicaciones largas
         system: finalSystemPrompt,
-        messages: conversationHistory,
+        messages: conversationHistory.slice(-20),  // máx 20 msgs (~4.000 tokens historial) — cubre sesiones normales y simulaciones completas
         temperature: 0.7
       }),
       signal: controller.signal
