@@ -1,7 +1,7 @@
 import { getSystemPromptForModule } from "../constants";
 import { UserProfile, AppMode, Message } from "../types";
 
-// URL de la API de Anthropic
+const API_URL = '/api/chat';
 const API_URL = 'https://api.anthropic.com/v1/messages';
 
 // Variables persistentes en memoria para manejar la sesión de Claude
