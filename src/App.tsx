@@ -315,8 +315,8 @@ function App() {
         <div className="absolute inset-0 bg-[#020408]/20" />
       </div>
 
-      <header className="h-16 border-b border-white/5 bg-[#020408]/80 backdrop-blur-xl flex items-center justify-between px-6 z-40 shrink-0">
-        <div className="flex items-center gap-6">
+      <header className="h-16 border-b border-white/5 bg-[#020408]/90 backdrop-blur-xl flex items-center justify-between px-4 md:px-6 z-40 shrink-0">
+        <div className="flex items-center gap-3">
           <button 
             onClick={() => setIsSidebarOpen(true)}
             className="p-2 md:hidden rounded-lg bg-white/5 text-slate-400 hover:text-white transition-colors"
@@ -324,18 +324,22 @@ function App() {
             <svg xmlns="http://www.w3.org/2000/svg" width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round"><line x1="3" y1="12" x2="21" y2="12"></line><line x1="3" y1="6" x2="21" y2="6"></line><line x1="3" y1="18" x2="21" y2="18"></line></svg>
           </button>
           
-          <div className="flex items-center gap-3">
-            <div className="w-8 h-8 rounded-lg bg-medical-500 flex items-center justify-center text-white shadow-lg shadow-medical-500/20">
-              <svg xmlns="http://www.w3.org/2000/svg" width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round"><path d="M11 2a2 2 0 0 0-2 2v5H4a2 2 0 0 0-2 2v2c0 1.1.9 2 2 2h5v5c0 1.1.9 2 2 2h2a2 2 0 0 0 2-2v-5h5a2 2 0 0 0 2-2v-2a2 2 0 0 0-2-2h-5V4a2 2 0 0 0-2-2h-2z"/></svg>
+          {/* Brand — solo visible en mobile; en desktop el sidebar ya lo muestra */}
+          <div className="flex items-center gap-2.5 md:hidden">
+            <div className="w-8 h-8 rounded-lg bg-medical-600 flex items-center justify-center text-white shadow-lg shadow-medical-600/20 border border-white/10">
+              <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round"><path d="M11 2a2 2 0 0 0-2 2v5H4a2 2 0 0 0-2 2v2c0 1.1.9 2 2 2h5v5c0 1.1.9 2 2 2h2a2 2 0 0 0 2-2v-5h5a2 2 0 0 0 2-2v-2a2 2 0 0 0-2-2h-5V4a2 2 0 0 0-2-2h-2z"/></svg>
             </div>
-            <h1 className="font-display font-bold text-lg tracking-tight hidden sm:block uppercase">DR. MEDIX</h1>
+            <div>
+              <span className="font-display font-bold text-sm text-white uppercase tracking-tight block leading-none">DR. MEDIX</span>
+              <span className="text-[8px] font-bold text-white/30 uppercase tracking-[0.15em] block mt-0.5">6 Dimensiones</span>
+            </div>
           </div>
         </div>
 
-        <div className="flex items-center gap-8">
+        <div className="flex items-center gap-4 md:gap-6">
           <div className="hidden lg:flex items-center gap-4">
             <div className="flex flex-col items-end">
-              <span className="text-[10px] font-bold text-slate-500 uppercase tracking-widest leading-none mb-1">Módulo Actual</span>
+              <span className="text-[9px] font-bold text-slate-500 uppercase tracking-[0.2em] leading-none mb-1">Módulo Actual</span>
               <span className="text-xs font-semibold text-white">
                 {activeModule === 0 ? "Evaluación Inicial" : `Módulo ${activeModule}`}
               </span>
@@ -343,12 +347,12 @@ function App() {
             <div className="h-8 w-px bg-white/10" />
           </div>
 
-          <div className="flex items-center gap-4">
+          <div className="flex items-center gap-3">
             <div className="flex flex-col items-end text-right">
-              <span className="text-[10px] font-bold text-slate-400 uppercase tracking-widest leading-none mb-1">Progreso</span>
-              <span className="text-xs font-bold text-medical-500">{userProfile?.xp || 0} XP</span>
+              <span className="text-[9px] font-bold text-slate-500 uppercase tracking-[0.2em] leading-none mb-1">Progreso</span>
+              <span className="text-xs font-bold text-medical-400">{userProfile?.xp || 0} XP</span>
             </div>
-            <div className="w-9 h-9 rounded-xl bg-white/5 border border-white/10 flex items-center justify-center text-xs font-bold text-white shadow-inner">
+            <div className="w-9 h-9 rounded-xl bg-gradient-to-br from-medical-500/20 to-emerald-700/20 border border-medical-500/20 flex items-center justify-center text-xs font-bold text-white shadow-inner">
               {userProfile?.name.charAt(0) || "U"}
             </div>
           </div>

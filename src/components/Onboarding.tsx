@@ -167,47 +167,73 @@ const Onboarding: React.FC<OnboardingProps> = ({ onComplete, onBack }) => {
       <motion.div 
         initial={{ opacity: 0, y: 20 }}
         animate={{ opacity: 1, y: 0 }}
-        className="w-full max-w-4xl glass-dark rounded-2xl sm:rounded-[2.5rem] shadow-2xl border border-white/10 overflow-hidden relative z-10 backdrop-blur-2xl h-[95vh] md:h-auto md:max-h-[95vh] flex flex-col"
+        className="w-full max-w-5xl glass-dark rounded-2xl sm:rounded-[2.5rem] shadow-2xl border border-white/10 overflow-hidden relative z-10 backdrop-blur-2xl h-[95vh] md:h-auto md:max-h-[95vh] flex flex-col"
       >
         <div className="flex flex-col md:flex-row h-full overflow-hidden">
           
-          {/* Sidebar Info (Desktop) */}
-          <div className="hidden md:flex w-56 lg:w-64 bg-black/40 p-6 lg:p-8 flex-col justify-between relative overflow-hidden border-r border-white/5 shrink-0">
+          {/* Sidebar Info (Desktop) — mismas proporciones que el Sidebar interno: w-72 lg:w-80 */}
+          <div className="hidden md:flex w-72 lg:w-80 bg-black/40 p-6 lg:p-8 flex-col justify-between relative overflow-hidden border-r border-white/5 shrink-0">
             <div className="absolute top-0 left-0 w-full h-full opacity-20 pointer-events-none">
-              <div className="absolute top-10 left-10 w-24 h-24 border-2 border-medical-500/30 rounded-full blur-sm" />
-              <div className="absolute bottom-20 -right-10 w-32 h-32 border border-blue-500/20 rounded-full blur-sm" />
+              <div className="absolute top-10 left-10 w-32 h-32 border-2 border-medical-500/30 rounded-full blur-sm" />
+              <div className="absolute bottom-20 -right-10 w-40 h-40 border border-blue-500/20 rounded-full blur-sm" />
             </div>
             
+            {/* Logo + Brand */}
             <div className="relative z-10">
-              <motion.div 
-                whileHover={{ scale: 1.05, rotate: 5 }}
-                className="w-10 h-10 rounded-xl bg-medical-600 flex items-center justify-center text-white mb-4 shadow-xl shadow-medical-600/20"
-              >
-                <Stethoscope size={20} />
-              </motion.div>
-              <h1 className="text-xl font-editorial font-bold text-white leading-tight mb-1 tracking-tight uppercase">DR. MEDIX</h1>
-              <p className="text-[9px] font-bold uppercase tracking-[0.2em] text-slate-500 mt-1">
-                6 Dimensiones · 1 Profesional Completo
-              </p>
-            </div>
-
-            <div className="relative z-10 space-y-3">
-              <div className="flex items-center gap-2 group">
-                <div className="w-7 h-7 rounded-lg bg-white/5 flex items-center justify-center text-medical-400 group-hover:bg-medical-600/20 transition-colors">
-                  <ShieldCheck size={14} />
-                </div>
+              <div className="flex items-center gap-3 mb-6">
+                <motion.div 
+                  whileHover={{ scale: 1.05, rotate: 5 }}
+                  className="w-12 h-12 rounded-xl bg-medical-600 flex items-center justify-center text-white shadow-xl shadow-medical-600/20 border border-white/10"
+                >
+                  <Stethoscope size={22} />
+                </motion.div>
                 <div>
-                  <span className="block text-[9px] font-bold text-white uppercase tracking-wider">Certificación</span>
-                  <span className="block text-[7px] text-white/40">Avalado</span>
+                  <h1 className="text-base font-display font-bold text-white leading-tight tracking-tight uppercase">DR. MEDIX</h1>
+                  <p className="text-[9px] font-bold text-white/40 uppercase tracking-[0.2em] leading-tight mt-0.5">
+                    6 Dimensiones · 1 Profesional
+                  </p>
                 </div>
               </div>
-              <div className="flex items-center gap-2 group">
-                <div className="w-7 h-7 rounded-lg bg-white/5 flex items-center justify-center text-medical-400 group-hover:bg-medical-600/20 transition-colors">
-                  <Sparkles size={14} />
+
+              <p className="text-white/40 text-xs leading-relaxed font-light mb-8">
+                El primer ecosistema de desarrollo profesional integral para visitadores médicos en Ecuador.
+              </p>
+
+              {/* Dimension pills */}
+              <div className="space-y-2">
+                {[
+                  { label: 'Conocimiento Científico', color: 'bg-blue-500/20 text-blue-400 border-blue-500/20' },
+                  { label: 'Habilidades Comerciales', color: 'bg-emerald-500/20 text-emerald-400 border-emerald-500/20' },
+                  { label: 'Comunicación e Influencia', color: 'bg-amber-500/20 text-amber-400 border-amber-500/20' },
+                  { label: 'Inteligencia Emocional', color: 'bg-rose-500/20 text-rose-400 border-rose-500/20' },
+                  { label: 'Liderazgo y Carrera', color: 'bg-purple-500/20 text-purple-400 border-purple-500/20' },
+                  { label: 'Bienestar y Productividad', color: 'bg-teal-500/20 text-teal-400 border-teal-500/20' },
+                ].map((d, i) => (
+                  <div key={i} className={`flex items-center gap-2 px-3 py-1.5 rounded-lg border text-[9px] font-bold uppercase tracking-wider ${d.color}`}>
+                    <span className="w-1 h-1 rounded-full bg-current shrink-0" />
+                    {d.label}
+                  </div>
+                ))}
+              </div>
+            </div>
+
+            <div className="relative z-10 space-y-3 mt-6">
+              <div className="flex items-center gap-2.5 group">
+                <div className="w-8 h-8 rounded-lg bg-white/5 flex items-center justify-center text-medical-400 group-hover:bg-medical-600/20 transition-colors border border-white/5">
+                  <ShieldCheck size={15} />
                 </div>
                 <div>
-                  <span className="block text-[9px] font-bold text-white uppercase tracking-wider">IA Adaptativa</span>
-                  <span className="block text-[7px] text-white/40">Personalizado</span>
+                  <span className="block text-[10px] font-bold text-white uppercase tracking-wider">Certificación</span>
+                  <span className="block text-[8px] text-white/40">Avalado</span>
+                </div>
+              </div>
+              <div className="flex items-center gap-2.5 group">
+                <div className="w-8 h-8 rounded-lg bg-white/5 flex items-center justify-center text-medical-400 group-hover:bg-medical-600/20 transition-colors border border-white/5">
+                  <Sparkles size={15} />
+                </div>
+                <div>
+                  <span className="block text-[10px] font-bold text-white uppercase tracking-wider">IA Adaptativa</span>
+                  <span className="block text-[8px] text-white/40">Personalizado</span>
                 </div>
               </div>
             </div>

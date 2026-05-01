@@ -1,7 +1,7 @@
 import React from 'react';
 import { UserProfile } from '../types';
 import { RANKS, MODULES, getUnlockedModuleIds, MODULE_XP_REQUIREMENTS } from '../constants';
-import { BookOpen, LogOut, Star, CheckCircle2, Lock, PlayCircle, Sparkles, Stethoscope } from 'lucide-react';
+import { BookOpen, LogOut, Star, CheckCircle2, Lock, PlayCircle, Sparkles } from 'lucide-react';
 import { motion } from 'motion/react';
 
 interface SidebarProps {
@@ -28,15 +28,14 @@ const Sidebar: React.FC<SidebarProps> = ({ user, activeModuleId, onLogout, onMod
       
       {/* ── Brand Logo ── */}
       <div className="px-6 pt-8 pb-4">
-        <div className="flex items-center gap-3">
-          <div className="w-9 h-9 rounded-xl bg-medical-500 flex items-center justify-center text-white shadow-lg shadow-medical-500/20 border border-white/10">
-            <Stethoscope size={20} />
+        {/* Brand header — mismo estilo que el sidebar del Onboarding */}
+        <div className="flex items-center gap-3 mb-4">
+          <div className="w-12 h-12 rounded-xl bg-medical-600 flex items-center justify-center text-white shadow-xl shadow-medical-600/20 border border-white/10 shrink-0">
+            <svg xmlns="http://www.w3.org/2000/svg" width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round"><path d="M11 2a2 2 0 0 0-2 2v5H4a2 2 0 0 0-2 2v2c0 1.1.9 2 2 2h5v5c0 1.1.9 2 2 2h2a2 2 0 0 0 2-2v-5h5a2 2 0 0 0 2-2v-2a2 2 0 0 0-2-2h-5V4a2 2 0 0 0-2-2h-2z"/></svg>
           </div>
-          <div>
-            <h1 className="text-white font-editorial font-bold text-lg tracking-tight leading-none uppercase">Dr. Medix</h1>
-            <p className="text-[8px] font-black uppercase tracking-[0.2em] text-slate-500 mt-0.5 whitespace-nowrap">
-              6 Dimensiones · 1 Profesional
-            </p>
+          <div className="min-w-0">
+            <h1 className="text-base font-display font-bold text-white uppercase tracking-tight leading-tight">DR. MEDIX</h1>
+            <p className="text-[9px] font-bold text-white/40 uppercase tracking-[0.2em] leading-tight mt-0.5">6 Dimensiones · 1 Profesional</p>
           </div>
         </div>
       </div>
@@ -51,9 +50,10 @@ const Sidebar: React.FC<SidebarProps> = ({ user, activeModuleId, onLogout, onMod
             <svg xmlns="http://www.w3.org/2000/svg" width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round"><line x1="18" y1="6" x2="6" y2="18"></line><line x1="6" y1="6" x2="18" y2="18"></line></svg>
           </button>
         )}
-        
-        <div className="flex items-center gap-4 mb-6">
-          <div className="w-12 h-12 rounded-xl bg-gradient-to-br from-medical-500 to-emerald-700 flex items-center justify-center text-white font-bold text-xl shadow-lg border border-white/10">
+
+        {/* User card */}
+        <div className="flex items-center gap-3 p-3 rounded-xl bg-white/[0.03] border border-white/5 mb-4">
+          <div className="w-9 h-9 rounded-lg bg-gradient-to-br from-medical-500 to-emerald-700 flex items-center justify-center text-white font-bold text-sm shadow-lg border border-white/10 shrink-0">
             {user.name.charAt(0).toUpperCase()}
           </div>
           <div className="min-w-0">
