@@ -1,5 +1,45 @@
 
 import { UserLevel } from "./types";
+import { FlaskConical, TrendingUp, MessageSquare, Heart, Compass, Activity } from 'lucide-react';
+
+export const CUBO_DIMENSIONES = [
+  {
+    nombre: "Conocimiento Científico",
+    icon: FlaskConical,
+    color: "from-blue-500 to-indigo-600",
+    descripcion: "Farmacología, ARCSA/MSP y evidencia clínica.",
+  },
+  {
+    nombre: "Habilidades Comerciales",
+    icon: TrendingUp,
+    color: "from-emerald-500 to-teal-600",
+    descripcion: "Ventas consultivas, KAM y gestión de territorio.",
+  },
+  {
+    nombre: "Comunicación e Influencia",
+    icon: MessageSquare,
+    color: "from-amber-400 to-orange-500",
+    descripcion: "Persuasión ética, e-detailing y storytelling médico.",
+  },
+  {
+    nombre: "Inteligencia Emocional",
+    icon: Heart,
+    color: "from-rose-500 to-pink-600",
+    descripcion: "Resiliencia, autogestión y relaciones a largo plazo.",
+  },
+  {
+    nombre: "Liderazgo y Carrera",
+    icon: Compass,
+    color: "from-purple-500 to-violet-600",
+    descripcion: "Marca personal, LinkedIn y plan de carrera a 5 años.",
+  },
+  {
+    nombre: "Bienestar y Productividad",
+    icon: Activity,
+    color: "from-teal-500 to-cyan-600",
+    descripcion: "Campo, salud mental y hábitos. 20 años, no 4.",
+  },
+];
 
 // ============================================================
 // WIDGETS DIDÁCTICOS (COMPOSICIÓN DE RESPUESTA)

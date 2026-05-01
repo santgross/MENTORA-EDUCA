@@ -1,7 +1,7 @@
 import React from 'react';
 import { UserProfile } from '../types';
 import { RANKS, MODULES, getUnlockedModuleIds, MODULE_XP_REQUIREMENTS } from '../constants';
-import { BookOpen, LogOut, Star, CheckCircle2, Lock, PlayCircle, Sparkles } from 'lucide-react';
+import { BookOpen, LogOut, Star, CheckCircle2, Lock, PlayCircle, Sparkles, Stethoscope } from 'lucide-react';
 import { motion } from 'motion/react';
 
 interface SidebarProps {
@@ -26,6 +26,21 @@ const Sidebar: React.FC<SidebarProps> = ({ user, activeModuleId, onLogout, onMod
   return (
     <div className="w-72 lg:w-80 h-full glass-dark text-slate-400 flex flex-col z-20">
       
+      {/* ── Brand Logo ── */}
+      <div className="px-6 pt-8 pb-4">
+        <div className="flex items-center gap-3">
+          <div className="w-9 h-9 rounded-xl bg-medical-500 flex items-center justify-center text-white shadow-lg shadow-medical-500/20 border border-white/10">
+            <Stethoscope size={20} />
+          </div>
+          <div>
+            <h1 className="text-white font-editorial font-bold text-lg tracking-tight leading-none uppercase">Dr. Medix</h1>
+            <p className="text-[8px] font-black uppercase tracking-[0.2em] text-slate-500 mt-0.5 whitespace-nowrap">
+              6 Dimensiones · 1 Profesional
+            </p>
+          </div>
+        </div>
+      </div>
+
       {/* ── User Header ── */}
       <div className="p-6 border-b border-white/5 relative">
         {onClose && (

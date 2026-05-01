@@ -1,5 +1,6 @@
 import React, { useState, useEffect } from 'react';
 import { UserLevel, UserProfile } from '../types';
+import { CUBO_DIMENSIONES } from '../constants';
 import {
   Stethoscope, User, Briefcase, ArrowRight,
   RefreshCw, Mail, Phone, Lock, Info,
@@ -65,8 +66,8 @@ const Onboarding: React.FC<OnboardingProps> = ({ onComplete, onBack }) => {
   };
 
   const handleNext = () => {
-    if (step < 3) setStep(step + 1);
-    else if (step === 3) { setStep(4); generateAndSendCode(); }
+    if (step < 4) setStep(step + 1);
+    else if (step === 4) { setStep(5); generateAndSendCode(); }
   };
 
   const [verificationError, setVerificationError] = useState(false);
@@ -184,9 +185,9 @@ const Onboarding: React.FC<OnboardingProps> = ({ onComplete, onBack }) => {
               >
                 <Stethoscope size={20} />
               </motion.div>
-              <h1 className="text-xl font-editorial font-bold text-white leading-tight mb-1 tracking-tight">DR. MEDIX</h1>
-              <p className="text-white/50 text-[10px] leading-relaxed font-light">
-                Entrenamiento inmersivo con IA para la industria farmacéutica.
+              <h1 className="text-xl font-editorial font-bold text-white leading-tight mb-1 tracking-tight uppercase">DR. MEDIX</h1>
+              <p className="text-[9px] font-bold uppercase tracking-[0.2em] text-slate-500 mt-1">
+                6 Dimensiones · 1 Profesional Completo
               </p>
             </div>
 
@@ -230,7 +231,7 @@ const Onboarding: React.FC<OnboardingProps> = ({ onComplete, onBack }) => {
               {/* Progress Header */}
               <div className="flex items-center justify-between mb-4 sm:mb-6 shrink-0">
                 <div className="flex gap-1.5 sm:gap-2">
-                  {[1, 2, 3, 4].map(i => (
+                  {[1, 2, 3, 4, 5].map(i => (
                     <div 
                       key={i} 
                       className={`h-1 rounded-full transition-all duration-700 relative overflow-hidden ${
@@ -247,14 +248,60 @@ const Onboarding: React.FC<OnboardingProps> = ({ onComplete, onBack }) => {
                     </div>
                   ))}
                 </div>
-                <span className="text-[8px] font-bold text-white/30 uppercase tracking-[0.2em]">Paso {step} de 4</span>
+                <span className="text-[8px] font-bold text-white/30 uppercase tracking-[0.2em]">Paso {step} de 5</span>
               </div>
 
               {/* Scrollable Content */}
               <div className="flex-1 overflow-y-auto custom-scrollbar pr-1">
                 <AnimatePresence mode="wait">
-                  {/* STEP 1: Personal Info */}
+                  {/* STEP 1: Welcome / Cube */}
                   {step === 1 && (
+                    <motion.div
+                      key="step0"
+                      initial={{ opacity: 0, x: 20 }}
+                      animate={{ opacity: 1, x: 0 }}
+                      exit={{ opacity: 0, x: -20 }}
+                      className="space-y-6"
+                    >
+                      <div className="inline-flex items-center gap-2 px-4 py-1.5 rounded-full bg-white/5 border border-white/10 text-[10px] font-black uppercase tracking-[0.25em] text-medical-400 mb-2">
+                        <Sparkles size={12} />
+                        El Cubo Dr. Medix — 6 Dimensiones
+                      </div>
+
+                      <h2 className="text-3xl sm:text-4xl lg:text-5xl font-editorial font-black text-white uppercase tracking-tighter leading-tight">
+                        No es un curso.
+                        <span className="block text-transparent bg-clip-text bg-gradient-to-r from-medical-400 to-blue-400 italic">
+                          Es un sistema completo.
+                        </span>
+                      </h2>
+
+                      <p className="text-slate-400 text-sm leading-relaxed font-medium max-w-lg">
+                        Dr. Medix es el primer ecosistema de desarrollo profesional integral para visitadores médicos en Ecuador. Desarrollamos 6 dimensiones al mismo tiempo — porque en campo, todo ocurre al mismo tiempo.
+                      </p>
+
+                      <div className="grid grid-cols-2 sm:grid-cols-3 gap-3 mb-8">
+                        {CUBO_DIMENSIONES.map((dim, i) => (
+                          <div key={i} className="p-4 rounded-2xl bg-white/[0.03] border border-white/5 hover:bg-white/[0.06] transition-all group">
+                            <div className={`w-8 h-8 rounded-lg bg-gradient-to-br ${dim.color} flex items-center justify-center mb-3 group-hover:scale-110 transition-transform`}>
+                              <dim.icon size={16} className="text-white" />
+                            </div>
+                            <h4 className="text-white font-black text-[10px] uppercase tracking-widest mb-1">{dim.nombre}</h4>
+                            <p className="text-slate-500 text-[9px] leading-tight">{dim.descripcion}</p>
+                          </div>
+                        ))}
+                      </div>
+
+                      <div className="p-4 rounded-2xl bg-medical-500/10 border border-medical-500/20">
+                        <p className="text-medical-400 text-[10px] font-bold uppercase tracking-wider mb-1">Tu Ruta Crítica</p>
+                        <p className="text-slate-300 text-xs leading-relaxed">
+                          "17 módulos. 6 dimensiones. 1 certificación que el mercado reconoce. En 10 minutos, personalizaremos tu ruta de aprendizaje."
+                        </p>
+                      </div>
+                    </motion.div>
+                  )}
+
+                  {/* STEP 2: Personal Info */}
+                  {step === 2 && (
                     <motion.div
                       key="step1"
                       initial={{ opacity: 0, x: 20 }}
@@ -313,8 +360,8 @@ const Onboarding: React.FC<OnboardingProps> = ({ onComplete, onBack }) => {
                     </motion.div>
                   )}
 
-                  {/* STEP 2: Industry Status */}
-                  {step === 2 && (
+                  {/* STEP 3: Industry Status */}
+                  {step === 3 && (
                     <motion.div
                       key="step2"
                       initial={{ opacity: 0, x: 20 }}
@@ -331,7 +378,7 @@ const Onboarding: React.FC<OnboardingProps> = ({ onComplete, onBack }) => {
                         <button
                           onClick={() => {
                             setLevel(UserLevel.EXPERIMENTADO);
-                            setTimeout(() => setStep(3), 400);
+                            setTimeout(() => setStep(4), 400);
                           }}
                           className={`p-3 sm:p-4 rounded-xl border-2 text-left transition-all relative overflow-hidden group ${
                             level === UserLevel.EXPERIMENTADO 
@@ -357,7 +404,7 @@ const Onboarding: React.FC<OnboardingProps> = ({ onComplete, onBack }) => {
                         <button
                           onClick={() => {
                             setLevel(UserLevel.NOVATO);
-                            setTimeout(() => setStep(3), 400);
+                            setTimeout(() => setStep(4), 400);
                           }}
                           className={`p-3 sm:p-4 rounded-xl border-2 text-left transition-all relative overflow-hidden group ${
                             level === UserLevel.NOVATO 
@@ -401,8 +448,8 @@ const Onboarding: React.FC<OnboardingProps> = ({ onComplete, onBack }) => {
                     </motion.div>
                   )}
 
-                  {/* STEP 3: Motivation */}
-                  {step === 3 && (
+                  {/* STEP 4: Motivation */}
+                  {step === 4 && (
                     <motion.div
                       key="step3"
                       initial={{ opacity: 0, x: 20 }}
@@ -425,7 +472,7 @@ const Onboarding: React.FC<OnboardingProps> = ({ onComplete, onBack }) => {
                               onClick={() => {
                                 setMotivation(m.text);
                                 setTimeout(() => {
-                                  setStep(4);
+                                  setStep(5);
                                   generateAndSendCode();
                                 }, 400);
                               }}
@@ -453,8 +500,8 @@ const Onboarding: React.FC<OnboardingProps> = ({ onComplete, onBack }) => {
                     </motion.div>
                   )}
 
-                  {/* STEP 4: Verification */}
-                  {step === 4 && (
+                  {/* STEP 5: Verification */}
+                  {step === 5 && (
                     <motion.div
                       key="step4"
                       initial={{ opacity: 0, x: 20 }}
@@ -554,7 +601,7 @@ const Onboarding: React.FC<OnboardingProps> = ({ onComplete, onBack }) => {
               </div>
 
               {/* Footer Actions */}
-              {step < 4 && (
+              {step < 5 && (
                 <div className="mt-4 sm:mt-6 pt-4 sm:pt-5 border-t border-white/5 flex items-center justify-between shrink-0">
                   {step > 1 ? (
                     <button 
@@ -569,13 +616,13 @@ const Onboarding: React.FC<OnboardingProps> = ({ onComplete, onBack }) => {
                   <button
                     onClick={handleNext}
                     disabled={
-                      (step === 1 && (!name || !email || !phone)) ||
-                      (step === 2 && level === null) ||
-                      (step === 3 && !motivation)
+                      (step === 2 && (!name || !email || !phone)) ||
+                      (step === 3 && level === null) ||
+                      (step === 4 && !motivation)
                     }
                     className="btn-primary px-5 sm:px-7 py-2 sm:py-3 text-[11px] sm:text-xs group"
                   >
-                    {step === 3 ? 'Finalizar Registro' : 'Continuar'}
+                    {step === 4 ? 'Finalizar Registro' : step === 1 ? 'Iniciar Diagnóstico →' : 'Continuar'}
                     <ArrowRight size={14} className="sm:hidden group-hover:translate-x-1 transition-transform" />
                     <ArrowRight size={16} className="hidden sm:block group-hover:translate-x-1 transition-transform" />
                   </button>
