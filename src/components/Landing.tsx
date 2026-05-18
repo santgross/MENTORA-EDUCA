@@ -41,7 +41,7 @@ const Landing: React.FC<LandingProps> = ({ onStart, onDemo }) => {
           className="flex items-center gap-3 mb-4 bg-emerald-500/10 px-4 py-2 rounded-full border border-emerald-500/20"
         >
           <Stethoscope className="w-5 h-5 text-emerald-400" />
-          <span className="text-emerald-400 font-medium tracking-wide uppercase text-xs">Exclusivo para Ecuador</span>
+          <span className="text-emerald-400 font-medium tracking-wide uppercase text-xs">Latinoamérica</span>
         </motion.div>
 
         <motion.h1
@@ -59,7 +59,7 @@ const Landing: React.FC<LandingProps> = ({ onStart, onDemo }) => {
           transition={{ delay: 0.2 }}
           className="text-xl md:text-2xl text-gray-400 mb-12 font-medium max-w-2xl leading-relaxed"
         >
-          El primer programa de formación para <span className="text-white">Visitadores Médicos</span> con IA en Ecuador
+          El primer programa de formación para Visitadores Médicos con IA en Latinoamérica
         </motion.p>
 
         <motion.div
@@ -109,7 +109,7 @@ const Landing: React.FC<LandingProps> = ({ onStart, onDemo }) => {
           className="grid grid-cols-1 md:grid-cols-3 gap-8 py-10 border-t border-white/5 w-full"
         >
           {[
-            { label: "Visitadores en Ecuador", val: "8.000+", icon: Users },
+            { label: "Visitadores en la región", val: "58.000+", icon: Users },
             { label: "Áreas Terapéuticas", val: "17", icon: Stethoscope },
             { label: "Contexto ECU", val: "100%", icon: MapPin }
           ].map((stat, i) => (
