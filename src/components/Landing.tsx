@@ -111,7 +111,7 @@ const Landing: React.FC<LandingProps> = ({ onStart, onDemo }) => {
           {[
             { label: "Visitadores en la región", val: "58.000+", icon: Users },
             { label: "Áreas Terapéuticas", val: "17", icon: Stethoscope },
-            { label: "Contexto ECU", val: "100%", icon: MapPin }
+            { label: "Países disponibles", val: "2", icon: MapPin }
           ].map((stat, i) => (
             <div key={i} className="flex flex-col items-center">
               <stat.icon className="w-5 h-5 text-gray-600 mb-2" />
