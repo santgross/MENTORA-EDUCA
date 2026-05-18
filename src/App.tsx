@@ -5,13 +5,6 @@ import ChatInterface from './components/ChatInterface';
 import Onboarding from './components/Onboarding';
 import ModuleZero from './components/ModuleZero';
 import ModuleIntro from './components/ModuleIntro';
-import ModuleEmotionalIntelligence from './components/ModuleEmotionalIntelligence';
-import ModulePersonalBrand from './components/ModulePersonalBrand';
-import ModuleResilience from './components/ModuleResilience';
-import ModuleLongTermRelationships from './components/ModuleLongTermRelationships';
-import ModuleCareerPlan from './components/ModuleCareerPlan';
-import ModuleFieldProductivity from './components/ModuleFieldProductivity';
-import ModuleWellbeing from './components/ModuleWellbeing';
 import PhaseTransition from './components/PhaseTransition';
 import { UserProfile, Message } from './types';
 import { INITIAL_USER_PROFILE, RANKS } from './constants';
@@ -114,7 +107,6 @@ function App() {
   const [isOnboardingComplete, setIsOnboardingComplete] = useState(false);
   const [showLanding, setShowLanding] = useState(true);
   const [isSidebarOpen, setIsSidebarOpen] = useState(false);
-  const [_showPhaseTransition, _setShowPhaseTransition] = useState<boolean>(false);
   const [moduleIntroStates, setModuleIntroStates] = useState<Record<number, boolean>>({
     1: false,
     2: false,
@@ -371,76 +363,6 @@ function App() {
                     prerequisite={CORE_MODULES_CONFIG[activeModule].prerequisite}
                     onStartChat={() => setModuleIntroStates(prev => ({ ...prev, [activeModule]: true }))}
                   />
-                </motion.div>
-              ) : activeModule === 13 && !moduleIntroStates[13] ? (
-                <motion.div
-                  key="module-13-intro"
-                  initial={{ opacity: 0 }}
-                  animate={{ opacity: 1 }}
-                  exit={{ opacity: 0 }}
-                  className="flex-1 flex flex-col h-full"
-                >
-                  <ModuleEmotionalIntelligence onStartChat={() => setModuleIntroStates(prev => ({ ...prev, 13: true }))} />
-                </motion.div>
-              ) : activeModule === 14 && !moduleIntroStates[14] ? (
-                <motion.div
-                  key="module-14-intro"
-                  initial={{ opacity: 0 }}
-                  animate={{ opacity: 1 }}
-                  exit={{ opacity: 0 }}
-                  className="flex-1 flex flex-col h-full"
-                >
-                  <ModulePersonalBrand onStartChat={() => setModuleIntroStates(prev => ({ ...prev, 14: true }))} />
-                </motion.div>
-              ) : activeModule === 15 && !moduleIntroStates[15] ? (
-                <motion.div
-                  key="module-15-intro"
-                  initial={{ opacity: 0 }}
-                  animate={{ opacity: 1 }}
-                  exit={{ opacity: 0 }}
-                  className="flex-1 flex flex-col h-full"
-                >
-                  <ModuleResilience onStartChat={() => setModuleIntroStates(prev => ({ ...prev, 15: true }))} />
-                </motion.div>
-              ) : activeModule === 16 && !moduleIntroStates[16] ? (
-                <motion.div
-                  key="module-16-intro"
-                  initial={{ opacity: 0 }}
-                  animate={{ opacity: 1 }}
-                  exit={{ opacity: 0 }}
-                  className="flex-1 flex flex-col h-full"
-                >
-                  <ModuleLongTermRelationships onStartChat={() => setModuleIntroStates(prev => ({ ...prev, 16: true }))} />
-                </motion.div>
-              ) : activeModule === 17 && !moduleIntroStates[17] ? (
-                <motion.div
-                  key="module-17-intro"
-                  initial={{ opacity: 0 }}
-                  animate={{ opacity: 1 }}
-                  exit={{ opacity: 0 }}
-                  className="flex-1 flex flex-col h-full"
-                >
-                  <ModuleCareerPlan onStartChat={() => setModuleIntroStates(prev => ({ ...prev, 17: true }))} />
-                </motion.div>
-              ) : activeModule === 18 && !moduleIntroStates[18] ? (
-                <motion.div
-                  key="module-18-intro"
-                  initial={{ opacity: 0 }}
-                  animate={{ opacity: 1 }}
-                  exit={{ opacity: 0 }}
-                  className="flex-1 flex flex-col h-full"
-                >
-                  <ModuleFieldProductivity onStartChat={() => setModuleIntroStates(prev => ({ ...prev, 18: true }))} />
-                </motion.div>
-              ) : activeModule === 19 && !moduleIntroStates[19] ? (
-                <motion.div
-                  key="module-19-intro"
-                  initial={{ opacity: 0 }}
-                  animate={{ opacity: 1 }}
-                  exit={{ opacity: 0 }}
-                  className="flex-1 flex flex-col h-full"
-                >
-                  <ModuleWellbeing onStartChat={() => setModuleIntroStates(prev => ({ ...prev, 19: true }))} />
                 </motion.div>
               ) : (
                 <motion.div
