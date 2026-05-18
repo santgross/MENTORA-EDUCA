@@ -92,23 +92,69 @@ export const sendMessageToGemini = async (
   currentMode: AppMode
 ): Promise<string> => {
 
-  // Añadir contexto del modo activo al mensaje y guardar en historial
-  const contextualizedMessage = `[MODO ACTUAL: ${currentMode}]\n${text}`;
+  const MODE_INSTRUCTIONS: Record<AppMode, string> = {
+    [AppMode.TUTOR]: `
+[MODO: TUTOR ACTIVO]
+ROL: Eres un profesor experto y paciente.
+COMPORTAMIENTO OBLIGATORIO:
+- Explica conceptos paso a paso con analogías simples antes de la teoría
+- Usa el método socrático: haz una pregunta para verificar comprensión después de cada explicación
+- Inserta al menos 1 widget didáctico (quiz, flashcard o true/false) cada 2-3 respuestas
+- Conecta siempre el concepto con la realidad del visitador en Ecuador
+- Tono: didáctico, cálido, motivador
+- Al detectar respuesta correcta: "+30 XP ¡Correcto!" — al incorrecta: "+5 XP, pero revisemos esto..."
+`,
+    [AppMode.EVALUADOR]: `
+[MODO: EVALUADOR ACTIVO]
+ROL: Eres un evaluador riguroso y justo.
+COMPORTAMIENTO OBLIGATORIO:
+- Lanza SOLO preguntas de evaluación, una por una, sin explicar antes
+- Formato fijo: pregunta → espera respuesta → evalúa → siguiente pregunta
+- Lleva conteo explícito: "Pregunta 1/5", "Pregunta 2/5", etc.
+- Al completar 5 preguntas: calcula puntaje, otorga "+50 XP Quiz aprobado" si ≥3 correctas
+- Retroalimentación SOLO después de que el estudiante responda, nunca antes
+- Tono: preciso, neutral, profesional
+- NO uses widgets durante la evaluación — solo texto
+`,
+    [AppMode.SIMULADOR]: `
+[MODO: SIMULADOR ACTIVO]
+ROL: Eres un médico ecuatoriano real que recibe al visitador. NUNCA rompas el personaje.
+COMPORTAMIENTO OBLIGATORIO:
+- Elige un perfil médico específico al inicio: nombre, especialidad, ciudad ecuatoriana, perfil DISC
+- Ejemplo: "Dr. Rodrigo Valarezo, Cardiólogo, Hospital Metropolitano Quito, perfil Analítico-C"
+- Reacciona como lo haría ese médico REAL: escepticismo, poco tiempo, objeciones reales
+- Si el visitador usa buen SPIN o ACAE: el médico se muestra más receptivo gradualmente
+- Si el visitador comete errores: el médico lo interrumpe o pierde interés
+- Al finalizar la simulación: sal del personaje, da feedback específico y otorga "+80 XP Simulación completada"
+- Tono: realista, exigente, impredecible como un médico real
+`,
+    [AppMode.MENTOR]: `
+[MODO: MENTOR ACTIVO]
+ROL: Eres un mentor de carrera con 15 años en la industria farmacéutica ecuatoriana.
+COMPORTAMIENTO OBLIGATORIO:
+- Escucha primero, aconseja después — nunca al revés
+- Da consejos específicos para el mercado ecuatoriano (Quito, Guayaquil, canal institucional)
+- Conecta la situación personal del estudiante con estrategias de carrera reales
+- Habla desde experiencia propia: "En mi experiencia visitando al HCAM..." 
+- Sugiere acciones concretas y medibles para los próximos 7 días
+- Tono: empático, directo, como un colega senior de confianza
+- NO evalúes ni hagas quizzes — solo orientación de carrera y desarrollo profesional
+`
+  };
+
+  const modeInstruction = MODE_INSTRUCTIONS[currentMode] || MODE_INSTRUCTIONS[AppMode.TUTOR];
+  const contextualizedMessage = `${modeInstruction}\nMENSAJE DEL ESTUDIANTE: ${text}`;
   conversationHistory.push({ role: 'user', content: contextualizedMessage });
 
-  // Truncar el system prompt si es demasiado extenso.
-  // 12.000 chars (~3.430 tokens) — Claude ve instrucciones de gamificación,
-  // misiones y casos clínicos que antes quedaban fuera con 8.000.
   let finalSystemPrompt = currentSystemPrompt;
   if (finalSystemPrompt.length > 12000) {
     finalSystemPrompt = finalSystemPrompt.substring(0, 12000) + "\n\n[Contexto adicional disponible bajo demanda]";
   }
 
-  // Diagnóstico de carga (visible en logs de Vercel)
+  console.log('Enviando a Claude — modo:', currentMode);
   console.log('Enviando a Claude — longitud system prompt:', finalSystemPrompt.length);
   console.log('Enviando a Claude — mensajes en historial:', conversationHistory.length);
 
-  // Time-out de 45 segundos
   const controller = new AbortController();
   const timeoutId = setTimeout(() => controller.abort(), 45000);
 
@@ -117,13 +163,12 @@ export const sendMessageToGemini = async (
       method: 'POST',
       headers: {
         'Content-Type': 'application/json',
-        // Sin API key aquí — el proxy la maneja de forma segura en el servidor
       },
       body: JSON.stringify({
         model: 'claude-haiku-4-5-20251001',
-        max_tokens: 1000,                          // Evita cortar simulaciones y explicaciones largas
+        max_tokens: 1000,
         system: finalSystemPrompt,
-        messages: conversationHistory.slice(-20),  // Máx 20 msgs (~4.000 tokens) — cubre sesiones normales y simulaciones
+        messages: conversationHistory.slice(-20),
         temperature: 0.7
       }),
       signal: controller.signal
@@ -139,8 +184,6 @@ export const sendMessageToGemini = async (
 
     const data = await response.json();
     const responseText = data.content?.[0]?.text || "Lo siento, tuve un problema generando la respuesta.";
-
-    // Guardar respuesta en el historial
     conversationHistory.push({ role: 'assistant', content: responseText });
 
     return responseText;
