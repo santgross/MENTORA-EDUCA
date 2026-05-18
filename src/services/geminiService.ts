@@ -41,15 +41,19 @@ export const initializeChat = async (
 
   if (!hasHistory) {
     if (moduleId === 1) {
+      const countryNames: Record<string, string> = {
+        EC: 'Ecuador', CO: 'Colombia', PE: 'Perú', CL: 'Chile', BO: 'Bolivia'
+      };
+      const countryName = countryNames[country] || 'tu país';
       specificInstruction = `
 **ESTADO ACTUAL:** El estudiante ACABA de iniciar el Módulo 1 por primera vez.
 
 **TU PRIMERA ACCIÓN (OBLIGATORIA):**
 1. Bienvenida breve y motivadora: "¡Bienvenido a bordo, ${user.name}! 🚀 Módulo 1 activado oficialmente."
-2. Contexto del dilema central del módulo: En el ecosistema farmacéutico ecuatoriano existe una pregunta estratégica que divide a los visitadores novatos: ¿Dónde concentrar la energía — en el sector público (MSP/IESS, 68% de la población) o en el sector privado (más ágil y personalizado)?
-3. Pregunta de activación: "Antes de entrar a la teoría: ¿cuál es tu intuición inicial? ¿Dónde crees que debería enfocarse un visitador nuevo en Ecuador — en la escala del sector público o en la agilidad del privado? ¿Por qué?"
+2. Presenta el dilema central adaptado al país del estudiante (${countryName}) usando el conocimiento del sistema de salud local que tienes en tu system prompt.
+3. Pregunta de activación abierta: invita al estudiante a compartir su intuición inicial sobre dónde enfocarse en el ecosistema de ${countryName}.
 
-NOTA: NO preguntes "¿en qué te ayudo?". TOMA LA INICIATIVA con el dilema estratégico del módulo.
+NOTA: NO preguntes "¿en qué te ayudo?". TOMA LA INICIATIVA con el dilema estratégico del módulo adaptado a ${countryName}.
       `;
     } else {
       specificInstruction = `
