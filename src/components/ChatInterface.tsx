@@ -302,7 +302,12 @@ const LOADING_PHRASES = [
                 Módulo {activeModuleId}
               </div>
             </div>
-            <span className="text-[10px] sm:text-xs font-bold text-slate-500 uppercase tracking-widest block mt-0.5 opacity-60">IA Mentor Especialista</span>
+            <span className="text-[10px] sm:text-xs font-bold uppercase tracking-widest block mt-0.5 opacity-80" style={{ color: displayInfo.hex }}>
+              {currentMode === AppMode.TUTOR ? 'Modo Aprendizaje Activo' : 
+               currentMode === AppMode.EVALUADOR ? 'Modo Evaluación en Curso' : 
+               currentMode === AppMode.SIMULADOR ? 'Modo Simulación Clínica' : 
+               'Modo Mentoría de Carrera'}
+            </span>
           </div>
         </div>
 
@@ -335,7 +340,8 @@ const LOADING_PHRASES = [
       <motion.div 
         initial={{ y: -5, opacity: 0 }}
         animate={{ y: 0, opacity: 1 }}
-        className="bg-medical-500 text-white px-4 sm:px-8 py-2 flex items-center justify-between z-20 shrink-0 border-b border-medical-400/30"
+        className="text-white px-4 sm:px-8 py-2 flex items-center justify-between z-20 shrink-0 border-b border-white/10"
+        style={{ backgroundColor: displayInfo.hex }}
       >
         <div className="flex items-center gap-3 overflow-hidden">
           <div className="p-1 bg-white/20 rounded shadow-inner">
@@ -385,7 +391,8 @@ const LOADING_PHRASES = [
                 initial={{ width: 0 }}
                 animate={{ width: `${progress}%` }}
                 transition={{ duration: 1, ease: "easeOut" }}
-                className="absolute inset-y-0 left-0 bg-medical-500 shadow-[0_0_8px_rgba(16,185,129,0.4)]"
+                className="absolute inset-y-0 left-0 transition-all duration-500"
+                style={{ backgroundColor: displayInfo.hex, boxShadow: `0 0 8px ${displayInfo.hex}66` }}
               />
             </div>
 
