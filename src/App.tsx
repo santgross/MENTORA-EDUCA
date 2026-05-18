@@ -12,6 +12,7 @@ import ModuleLongTermRelationships from './components/ModuleLongTermRelationship
 import ModuleCareerPlan from './components/ModuleCareerPlan';
 import ModuleFieldProductivity from './components/ModuleFieldProductivity';
 import ModuleWellbeing from './components/ModuleWellbeing';
+import PhaseTransition from './components/PhaseTransition';
 import { UserProfile, Message } from './types';
 import { INITIAL_USER_PROFILE, RANKS } from './constants';
 import { motion, AnimatePresence } from 'motion/react';
@@ -113,6 +114,7 @@ function App() {
   const [isOnboardingComplete, setIsOnboardingComplete] = useState(false);
   const [showLanding, setShowLanding] = useState(true);
   const [isSidebarOpen, setIsSidebarOpen] = useState(false);
+  const [_showPhaseTransition, _setShowPhaseTransition] = useState<boolean>(false);
   const [moduleIntroStates, setModuleIntroStates] = useState<Record<number, boolean>>({
     1: false,
     2: false,
@@ -335,6 +337,21 @@ function App() {
                   className="flex-1 flex flex-col"
                 >
                   <ModuleZero user={userProfile} onComplete={handleModuleZeroComplete} />
+                </motion.div>
+              ) : activeModule === 11 && !moduleIntroStates[11] ? (
+                <motion.div
+                  key="phase-transition"
+                  initial={{ opacity: 0 }}
+                  animate={{ opacity: 1 }}
+                  exit={{ opacity: 0 }}
+                  className="flex-1 flex flex-col h-full"
+                >
+                  <PhaseTransition
+                    userName={userProfile?.name?.split(' ')[0] || 'Visitador'}
+                    onContinue={() => {
+                      setModuleIntroStates(prev => ({ ...prev, 11: true }));
+                    }}
+                  />
                 </motion.div>
               ) : CORE_MODULES_CONFIG[activeModule] && !moduleIntroStates[activeModule] ? (
                 <motion.div
