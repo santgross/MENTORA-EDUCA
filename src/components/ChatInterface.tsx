@@ -74,7 +74,6 @@ const LOADING_PHRASES = [
           const firstResponse = await sendMessageToGemini("Hola Dr. Medix, estoy listo para comenzar este módulo.", currentMode);
           const aiMsg: Message = { id: Date.now().toString(), role: 'model', text: firstResponse, timestamp: new Date() };
           setMessages([aiMsg]);
-          detectAndAwardXP(firstResponse);
         }
       } catch (err) {
         console.error("Error initializing chat:", err);
@@ -189,9 +188,6 @@ const LOADING_PHRASES = [
       const aiMsg: Message = { id: (Date.now()+1).toString(), role: 'model', text: responseText, timestamp: new Date() };
       setMessages(prev => [...prev, aiMsg]);
       detectAndAwardXP(responseText);
-      
-      // Sumar 5 XP por cada mensaje enviado al mentor
-      onXPIncrease(5);
     } catch (err) {
       console.error('Failed to send message', err);
     } finally {
