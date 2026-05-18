@@ -1,4 +1,4 @@
-import { getSystemPromptForModule } from "../constants";
+import { getSystemPromptForModuleAndCountry } from '../country_routing';
 import { UserProfile, AppMode, Message } from "../types";
 
 // Apunta al proxy seguro de Vercel — la API key nunca sale del servidor
@@ -27,7 +27,8 @@ export const initializeChat = async (
   activeModuleId?: number
 ) => {
   const moduleId = activeModuleId ?? getActiveModuleId(user);
-  const baseSystemPrompt = getSystemPromptForModule(moduleId);
+  const country = user.country || 'EC';
+  const baseSystemPrompt = getSystemPromptForModuleAndCountry(moduleId, country);
 
   // Cargar historial en el formato de Claude
   conversationHistory = previousMessages.map(msg => ({
