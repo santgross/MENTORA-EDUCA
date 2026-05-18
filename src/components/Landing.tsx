@@ -14,6 +14,7 @@ const Landing: React.FC<LandingProps> = ({ onStart, onDemo }) => {
       name: "Experto Demo",
       email: "demo@drmedix.ec",
       phone: "0999999999",
+      country: 'EC',
       level: UserLevel.EXPERIMENTADO,
       motivation: "improve_results",
       xp: 500,

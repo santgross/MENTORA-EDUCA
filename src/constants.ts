@@ -1,5 +1,5 @@
 
-import { UserLevel } from "./types";
+import { UserLevel, UserProfile } from "./types";
 import { FlaskConical, TrendingUp, MessageSquare, Heart, Compass, Activity } from 'lucide-react';
 
 export const CUBO_DIMENSIONES = [
@@ -5912,10 +5912,11 @@ export const RANKS = [
   { minXp: 8000, title: "Maestro",      color: "bg-yellow-400" },
 ];
 
-export const INITIAL_USER_PROFILE = {
+export const INITIAL_USER_PROFILE: UserProfile = {
   name: "",
   email: "",
   phone: "",
+  country: 'EC',
   level: UserLevel.NOVATO,
   motivation: "",
   xp: 0,

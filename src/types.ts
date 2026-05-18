@@ -19,19 +19,22 @@ export interface Message {
   timestamp: Date;
 }
 
+export type SupportedCountry = 'EC' | 'CO' | 'PE' | 'CL' | 'BO';
+
 export interface UserProfile {
-  name: string; // Nombre y Apellido
+  name: string;
   email: string;
   phone: string;
+  country: SupportedCountry;
   level: UserLevel;
   motivation: string;
   xp: number;
-  rank: string; // Aprendiz, Practicante, etc.
+  rank: string;
   streak: number;
   completedModules: number[];
   badges: string[];
-  completedQuizzes: string[]; // IDs de quizzes completados para no repetir XP
-  lastActivity: string; // Fecha ISO de última actividad
+  completedQuizzes: string[];
+  lastActivity: string;
 }
 
 export interface ChatSession {

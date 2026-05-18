@@ -35,6 +35,7 @@ const Onboarding: React.FC<OnboardingProps> = ({ onComplete, onBack }) => {
   const [name, setName] = useState('');
   const [email, setEmail] = useState('');
   const [phone, setPhone] = useState('');
+  const [country] = useState<'EC' | 'CO' | 'PE' | 'CL' | 'BO'>('EC');
   const [level, setLevel] = useState<UserLevel | null>(null);
   const [motivation, setMotivation] = useState('');
   const [verificationCode, setVerificationCode] = useState('');
@@ -80,6 +81,7 @@ const Onboarding: React.FC<OnboardingProps> = ({ onComplete, onBack }) => {
           name, 
           email, 
           phone, 
+          country,
           level, 
           motivation, 
           xp: 0, 
