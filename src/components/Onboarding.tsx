@@ -4,8 +4,8 @@ import { CUBO_DIMENSIONES } from '../constants';
 import { COUNTRIES, SupportedCountry } from '../country_routing';
 import {
   Stethoscope, User, Briefcase, ArrowRight,
-  RefreshCw, Mail, Phone, Lock, Info,
-  RotateCcw, X, Building2, TrendingUp,
+  RefreshCw, Mail, Phone,
+  RotateCcw, Building2, TrendingUp,
   GraduationCap, HeartPulse, Globe,
   Rocket, BarChart3, Sparkles, ShieldCheck
 } from 'lucide-react';
@@ -38,65 +38,11 @@ const Onboarding: React.FC<OnboardingProps> = ({ onComplete, onBack }) => {
   const [level, setLevel] = useState<UserLevel | null>(null);
   const [motivation, setMotivation] = useState('');
   const [country, setCountry] = useState<SupportedCountry>('EC');
-  const [verificationCode, setVerificationCode] = useState('');
-  const [generatedCode, setGeneratedCode] = useState('');
-  const [isSending, setIsSending] = useState(false);
-  const [resendTimer, setResendTimer] = useState(0);
-  const [showDemoNotification, setShowDemoNotification] = useState(false);
 
   useEffect(() => { setMotivation(''); }, [level]);
 
-  useEffect(() => {
-    let interval: ReturnType<typeof setInterval>;
-    if (resendTimer > 0) interval = setInterval(() => setResendTimer(p => p - 1), 1000);
-    return () => clearInterval(interval);
-  }, [resendTimer]);
-
-  const generateAndSendCode = async () => {
-    setIsSending(true);
-    setVerificationCode('');
-    setShowDemoNotification(false);
-    const code = Math.floor(100000 + Math.random() * 900000).toString();
-    setGeneratedCode(code);
-    await new Promise(r => setTimeout(r, 1500));
-    setIsSending(false);
-    setResendTimer(30);
-    setVerificationCode(code);
-    setShowDemoNotification(true);
-    setTimeout(() => setShowDemoNotification(false), 6000);
-  };
-
   const handleNext = () => {
     if (step < 4) setStep(step + 1);
-    else if (step === 4) { setStep(5); generateAndSendCode(); }
-  };
-
-  const [verificationError, setVerificationError] = useState(false);
-
-  const handleVerifyAndSubmit = () => {
-    if (verificationCode === generatedCode || verificationCode === '000000') {
-      if (name && level !== null && motivation && email && phone) {
-        setVerificationError(false);
-        onComplete({ 
-          name, 
-          email, 
-          phone, 
-          country,
-          level, 
-          motivation, 
-          xp: 0, 
-          rank: 'Aprendiz', 
-          streak: 1, 
-          completedModules: [], 
-          badges: [],
-          completedQuizzes: [],
-          lastActivity: new Date().toISOString()
-        });
-      }
-    } else {
-      setVerificationError(true);
-      setTimeout(() => setVerificationError(false), 3000);
-    }
   };
 
   const isPro = level === UserLevel.EXPERIMENTADO;
@@ -107,64 +53,7 @@ const Onboarding: React.FC<OnboardingProps> = ({ onComplete, onBack }) => {
       
       {/* Decorative Background Elements */}
       <div className="absolute top-0 left-0 w-full h-full overflow-hidden pointer-events-none z-0">
-        <motion.div 
-          animate={{ 
-            scale: [1, 1.2, 1],
-            rotate: [0, 90, 0],
-            x: [0, 100, 0],
-            y: [0, 50, 0]
-          }}
-          transition={{ duration: 20, repeat: Infinity, ease: "linear" }}
-          className="absolute -top-24 -left-24 w-[500px] h-[500px] bg-medical-600/20 rounded-full blur-[120px]" 
-        />
-        <motion.div 
-          animate={{ 
-            scale: [1, 1.3, 1],
-            rotate: [0, -120, 0],
-            x: [0, -150, 0],
-            y: [0, 100, 0]
-          }}
-          transition={{ duration: 25, repeat: Infinity, ease: "linear" }}
-          className="absolute top-1/2 -right-24 w-[400px] h-[400px] bg-blue-600/10 rounded-full blur-[100px]" 
-        />
-        <motion.div 
-          animate={{ 
-            scale: [1, 1.1, 1],
-            x: [0, 50, 0],
-            y: [0, -80, 0]
-          }}
-          transition={{ duration: 18, repeat: Infinity, ease: "linear" }}
-          className="absolute -bottom-24 left-1/4 w-[600px] h-[600px] bg-emerald-600/10 rounded-full blur-[140px]" 
-        />
       </div>
-
-      {/* Demo notification */}
-      <AnimatePresence>
-        {showDemoNotification && (
-          <motion.div 
-            initial={{ opacity: 0, y: -100, x: '-50%' }}
-            animate={{ opacity: 1, y: 20, x: '-50%' }}
-            exit={{ opacity: 0, y: -100, x: '-50%' }}
-            className="fixed top-0 left-1/2 z-50 w-full max-w-md px-4"
-          >
-            <div className="glass-dark p-4 rounded-2xl shadow-2xl border border-white/10 flex gap-4 backdrop-blur-xl">
-              <div className="w-10 h-10 rounded-xl bg-medical-600 flex items-center justify-center shrink-0 shadow-lg shadow-medical-600/20">
-                <Mail size={20} className="text-white" />
-              </div>
-              <div className="flex-1 min-w-0">
-                <div className="flex justify-between items-start">
-                  <span className="text-[10px] font-bold text-medical-400 uppercase tracking-[0.2em]">Notificación de Acceso</span>
-                  <button onClick={() => setShowDemoNotification(false)} className="text-white/40 hover:text-white transition-colors">
-                    <X size={16} />
-                  </button>
-                </div>
-                <p className="text-sm font-medium mt-1 text-white">Tu código de acceso es: <span className="text-medical-400 font-mono font-bold tracking-widest">{generatedCode}</span></p>
-                <p className="text-[10px] text-white/40 mt-0.5">De: sistema@dr-medix.ai</p>
-              </div>
-            </div>
-          </motion.div>
-        )}
-      </AnimatePresence>
 
       <motion.div 
         initial={{ opacity: 0, y: 20 }}
@@ -242,7 +131,7 @@ const Onboarding: React.FC<OnboardingProps> = ({ onComplete, onBack }) => {
               {/* Progress Header */}
               <div className="flex items-center justify-between mb-4 sm:mb-6 shrink-0">
                 <div className="flex gap-1.5 sm:gap-2">
-                  {[1, 2, 3, 4, 5].map(i => (
+                  {[1, 2, 3, 4].map(i => (
                     <div 
                       key={i} 
                       className={`h-1 rounded-full transition-all duration-700 relative overflow-hidden ${
@@ -259,7 +148,7 @@ const Onboarding: React.FC<OnboardingProps> = ({ onComplete, onBack }) => {
                     </div>
                   ))}
                 </div>
-                <span className="text-[8px] font-bold text-white/30 uppercase tracking-[0.2em]">Paso {step} de 5</span>
+                <span className="text-[8px] font-bold text-white/30 uppercase tracking-[0.2em]">Paso {step} de 4</span>
               </div>
 
               {/* Scrollable Content */}
@@ -510,10 +399,24 @@ const Onboarding: React.FC<OnboardingProps> = ({ onComplete, onBack }) => {
                             <button
                               key={m.id}
                               onClick={() => {
-                                setMotivation(m.text);
+                                const selectedMotivation = m.text;
+                                setMotivation(selectedMotivation);
                                 setTimeout(() => {
-                                  setStep(5);
-                                  generateAndSendCode();
+                                  onComplete({
+                                    name,
+                                    email,
+                                    phone,
+                                    country,
+                                    level: level!,
+                                    motivation: selectedMotivation,
+                                    xp: 0,
+                                    rank: 'Aprendiz',
+                                    streak: 1,
+                                    completedModules: [],
+                                    badges: [],
+                                    completedQuizzes: [],
+                                    lastActivity: new Date().toISOString()
+                                  });
                                 }, 400);
                               }}
                               className={`w-full p-3 sm:p-3.5 rounded-xl border-2 text-left transition-all flex items-center gap-3 sm:gap-4 group relative overflow-hidden ${
@@ -539,135 +442,35 @@ const Onboarding: React.FC<OnboardingProps> = ({ onComplete, onBack }) => {
                       </div>
                     </motion.div>
                   )}
-
-                  {/* STEP 5: Verification */}
-                  {step === 5 && (
-                    <motion.div
-                      key="step4"
-                      initial={{ opacity: 0, x: 20 }}
-                      animate={{ opacity: 1, x: 0 }}
-                      exit={{ opacity: 0, x: -20 }}
-                      className="space-y-4 sm:space-y-5 text-center py-2"
-                    >
-                      {isSending ? (
-                        <div className="py-8 sm:py-10 flex flex-col items-center justify-center space-y-4">
-                          <div className="relative">
-                            <div className="w-12 h-12 sm:w-14 sm:h-14 border-4 border-white/5 border-t-medical-600 rounded-full animate-spin" />
-                            <div className="absolute inset-0 flex items-center justify-center">
-                              <Lock size={16} className="text-medical-600 animate-pulse" />
-                            </div>
-                          </div>
-                          <div>
-                            <h3 className="text-sm sm:text-base font-bold text-white">Generando Acceso Seguro</h3>
-                            <p className="text-[9px] sm:text-[10px] text-white/40 mt-1 font-light">Encriptando credenciales...</p>
-                          </div>
-                        </div>
-                      ) : (
-                        <>
-                          <motion.div 
-                            initial={{ scale: 0.8, opacity: 0 }}
-                            animate={{ scale: 1, opacity: 1 }}
-                            className="w-14 h-14 sm:w-16 sm:h-16 rounded-2xl bg-medical-600/20 text-medical-500 flex items-center justify-center mx-auto mb-3 sm:mb-4 border border-medical-500/30 shadow-[0_0_50px_rgba(16,185,129,0.1)]"
-                          >
-                            <ShieldCheck size={28} className="sm:hidden" />
-                            <ShieldCheck size={32} className="hidden sm:block" />
-                          </motion.div>
-                          <div>
-                            <h2 className="text-lg sm:text-xl font-display font-bold text-white mb-1 tracking-tight">Verificación de Identidad</h2>
-                            <p className="text-white/50 text-[9px] sm:text-xs font-light">
-                              Ingresa el código enviado a <span className="text-white font-bold">{email}</span>
-                            </p>
-                          </div>
-
-          <div className="relative max-w-[220px] mx-auto group mb-4">
-            <Lock className={`absolute left-4 top-1/2 -translate-y-1/2 transition-colors ${verificationError ? 'text-rose-500' : 'text-white/20 group-focus-within:text-medical-500'}`} size={16} />
-            <input 
-              type="text" 
-              maxLength={6}
-              placeholder="······"
-              value={verificationCode}
-              onChange={e => {
-                setVerificationCode(e.target.value);
-                if (verificationError) setVerificationError(false);
-              }}
-              className={`w-full pl-10 pr-4 py-4 bg-white/5 border rounded-2xl text-center text-xl font-mono tracking-[0.5em] outline-none transition-all text-white ${
-                verificationError ? 'border-rose-500 bg-rose-500/10' : 'border-white/10 focus:border-medical-500/50'
-              }`}
-            />
-            <AnimatePresence>
-              {verificationError && (
-                <motion.div 
-                  initial={{ opacity: 0, y: 5 }}
-                  animate={{ opacity: 1, y: 0 }}
-                  exit={{ opacity: 0 }}
-                  className="absolute -bottom-6 left-0 w-full text-[9px] font-bold text-rose-500 uppercase tracking-widest text-center"
-                >
-                  Código de acceso no válido
-                </motion.div>
-              )}
-            </AnimatePresence>
-          </div>
-
-                          <div className="flex flex-col gap-2">
-                            <button
-                              onClick={handleVerifyAndSubmit}
-                              disabled={verificationCode.length !== 6}
-                              className="btn-primary w-full py-3 sm:py-3.5 text-sm shadow-2xl shadow-medical-600/20"
-                            >
-                              Iniciar Programa <ArrowRight size={16} />
-                            </button>
-
-                            <button
-                              onClick={generateAndSendCode}
-                              disabled={resendTimer > 0}
-                              className="text-[8px] sm:text-[9px] font-bold text-white/30 hover:text-medical-400 transition-colors flex items-center justify-center gap-2 disabled:opacity-50"
-                            >
-                              <RotateCcw size={10} />
-                              {resendTimer > 0 ? `Reenviar en ${resendTimer}s` : 'Solicitar nuevo código'}
-                            </button>
-                          </div>
-
-                          <div className="p-3 rounded-xl bg-white/5 border border-white/10 flex items-start gap-3 text-left backdrop-blur-md">
-                            <Info size={14} className="text-medical-500 mt-0.5 shrink-0" />
-                            <p className="text-[9px] text-slate-400 leading-relaxed font-medium">
-                              Acceso Experimental: Utiliza el código universal <span className="text-white font-bold">000000</span> para omitir la validación de correo corporativo.
-                            </p>
-                          </div>
-                        </>
-                      )}
-                    </motion.div>
-                  )}
                 </AnimatePresence>
               </div>
 
               {/* Footer Actions */}
-              {step < 5 && (
-                <div className="mt-4 sm:mt-6 pt-4 sm:pt-5 border-t border-white/5 flex items-center justify-between shrink-0">
-                  {step > 1 ? (
-                    <button 
-                      onClick={() => setStep(step - 1)}
-                      className="text-[9px] sm:text-[10px] font-bold text-white/30 hover:text-white transition-colors flex items-center gap-2"
-                    >
-                      <RotateCcw size={10} className="rotate-180" />
-                      Anterior
-                    </button>
-                  ) : <div />}
-                  
-                  <button
-                    onClick={handleNext}
-                    disabled={
-                      (step === 2 && (!name || !email || !phone)) ||
-                      (step === 3 && level === null) ||
-                      (step === 4 && !motivation)
-                    }
-                    className="btn-primary px-5 sm:px-7 py-2 sm:py-3 text-[11px] sm:text-xs group"
+              <div className="mt-4 sm:mt-6 pt-4 sm:pt-5 border-t border-white/5 flex items-center justify-between shrink-0">
+                {step > 1 ? (
+                  <button 
+                    onClick={() => setStep(step - 1)}
+                    className="text-[9px] sm:text-[10px] font-bold text-white/30 hover:text-white transition-colors flex items-center gap-2"
                   >
-                    {step === 4 ? 'Finalizar Registro' : step === 1 ? 'Iniciar Diagnóstico →' : 'Continuar'}
-                    <ArrowRight size={14} className="sm:hidden group-hover:translate-x-1 transition-transform" />
-                    <ArrowRight size={16} className="hidden sm:block group-hover:translate-x-1 transition-transform" />
+                    <RotateCcw size={10} className="rotate-180" />
+                    Anterior
                   </button>
-                </div>
-              )}
+                ) : <div />}
+                
+                <button
+                  onClick={handleNext}
+                  disabled={
+                    (step === 2 && (!name || !email || !phone)) ||
+                    (step === 3 && level === null) ||
+                    (step === 4 && !motivation)
+                  }
+                  className="btn-primary px-5 sm:px-7 py-2 sm:py-3 text-[11px] sm:text-xs group"
+                >
+                  {step === 4 ? 'Finalizar Registro' : step === 1 ? 'Iniciar Diagnóstico →' : 'Continuar'}
+                  <ArrowRight size={14} className="sm:hidden group-hover:translate-x-1 transition-transform" />
+                  <ArrowRight size={16} className="hidden sm:block group-hover:translate-x-1 transition-transform" />
+                </button>
+              </div>
             </div>
           </div>
         </div>
