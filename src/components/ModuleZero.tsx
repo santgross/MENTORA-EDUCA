@@ -197,9 +197,12 @@ const ModuleZero: React.FC<ModuleZeroProps> = ({ user, onComplete }) => {
                 </h1>
 
                 <p className="text-slate-400 text-base leading-relaxed mb-8 font-medium max-w-md mx-auto lg:mx-0">
-                  {isPro
-                    ? 'Tu diagnóstico avanzado está listo. Evaluaremos tus conocimientos clave para personalizar tu ruta.'
-                    : 'Bienvenido. Antes de empezar, haré un diagnóstico rápido para ajustar tu programa de aprendizaje.'}
+                  {user.country === 'CO' 
+                    ? "Bienvenido al programa para Colombia. Evaluaremos tu conocimiento del mercado colombiano — SGSSS, EPS, INVIMA y el ecosistema farmacéutico local."
+                    : (isPro
+                      ? 'Tu diagnóstico avanzado está listo. Evaluaremos tus conocimientos clave del mercado ecuatoriano para personalizar tu ruta.'
+                      : 'Bienvenido. Antes de empezar, haré un diagnóstico rápido para ajustar tu programa de aprendizaje.')
+                  }
                 </p>
               </div>
 

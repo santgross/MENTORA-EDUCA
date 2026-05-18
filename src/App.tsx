@@ -6,7 +6,8 @@ import Onboarding from './components/Onboarding';
 import ModuleZero from './components/ModuleZero';
 import ModuleIntro from './components/ModuleIntro';
 import PhaseTransition from './components/PhaseTransition';
-import { UserProfile, Message } from './types';
+import { UserProfile, Message, SupportedCountry } from './types';
+import { getCountryConfig } from './country_routing';
 import { INITIAL_USER_PROFILE, RANKS } from './constants';
 import { motion, AnimatePresence } from 'motion/react';
 
@@ -19,24 +20,28 @@ interface ModuleConfig {
   prerequisite?: string;
 }
 
-const CORE_MODULES_CONFIG: Record<number, ModuleConfig> = {
+const getCoreModulesConfig = (country: SupportedCountry): Record<number, ModuleConfig> => ({
   1: {
-    title: "Ecosistema Farmacéutico",
+    title: `Ecosistema Farmacéutico ${country}`,
     subtitle: "El tablero donde se juega tu carrera",
     duration: "1 semana",
     xpReward: 200,
     objectives: [
-      "Dominar el sistema de salud de tu país — público, privado y asegurador — para saber dónde están las oportunidades reales",
-      "Entender quién decide, quién compra y quién prescribe: los 3 actores que determinan tu éxito en campo",
-      "Conocer la normativa regulatoria de tu mercado como ventaja competitiva, no como trámite"
+      `Dominar el sistema de salud de ${getCountryConfig(country).name} — público, privado y asegurador — para saber dónde están las oportunidades reales`,
+      "Entender quién decide, quién compra y quién prescibe: los 3 actores que determinan tu éxito en campo",
+      `Conocer la normativa regulatoria de ${getCountryConfig(country).name} como ventaja competitiva, no como trámite`
     ]
   },
   7: {
-    title: "Normativa ARCSA/MSP",
-    subtitle: "Regulación y Control Sanitario",
+    title: `Normativa Regulatoria ${getCountryConfig(country).regulatoryBody}`,
+    subtitle: "El marco legal como ventaja competitiva",
     duration: "1 semana",
     xpReward: 300,
-    objectives: ["Dominar la regulación farmacéutica", "Entender registros sanitarios", "Aplicar el Código de Ética COÉTICA"],
+    objectives: [
+      `Dominar la regulación farmacéutica de ${getCountryConfig(country).name} al nivel que pocos visitadores conocen`,
+      "Entender registros sanitarios, control de precios y publicidad de medicamentos",
+      `Aplicar el Código de Ética de ${getCountryConfig(country).name} como diferenciador profesional`
+    ],
     prerequisite: "M1 completado"
   },
   8: {
@@ -102,7 +107,7 @@ const CORE_MODULES_CONFIG: Record<number, ModuleConfig> = {
     xpReward: 1000,
     objectives: ["Desarrollar proyecto integrador real", "Aprobar evaluación certificable", "Obtener certificado profesional"]
   }
-};
+});
 
 function App() {
   const [userProfile, setUserProfile] = useState<UserProfile | null>(null);
@@ -349,7 +354,7 @@ function App() {
                     }}
                   />
                 </motion.div>
-              ) : CORE_MODULES_CONFIG[activeModule] && !moduleIntroStates[activeModule] ? (
+              ) : getCoreModulesConfig(userProfile?.country || 'EC')[activeModule] && !moduleIntroStates[activeModule] ? (
                 <motion.div
                   key={`module-${activeModule}-intro`}
                   initial={{ opacity: 0 }}
@@ -359,12 +364,12 @@ function App() {
                 >
                   <ModuleIntro 
                     moduleId={activeModule}
-                    moduleTitle={CORE_MODULES_CONFIG[activeModule].title}
-                    moduleSubtitle={CORE_MODULES_CONFIG[activeModule].subtitle}
-                    duration={CORE_MODULES_CONFIG[activeModule].duration}
-                    xpReward={CORE_MODULES_CONFIG[activeModule].xpReward}
-                    objectives={CORE_MODULES_CONFIG[activeModule].objectives}
-                    prerequisite={CORE_MODULES_CONFIG[activeModule].prerequisite}
+                    moduleTitle={getCoreModulesConfig(userProfile?.country || 'EC')[activeModule].title}
+                    moduleSubtitle={getCoreModulesConfig(userProfile?.country || 'EC')[activeModule].subtitle}
+                    duration={getCoreModulesConfig(userProfile?.country || 'EC')[activeModule].duration}
+                    xpReward={getCoreModulesConfig(userProfile?.country || 'EC')[activeModule].xpReward}
+                    objectives={getCoreModulesConfig(userProfile?.country || 'EC')[activeModule].objectives}
+                    prerequisite={getCoreModulesConfig(userProfile?.country || 'EC')[activeModule].prerequisite}
                     onStartChat={() => setModuleIntroStates(prev => ({ ...prev, [activeModule]: true }))}
                   />
                 </motion.div>
