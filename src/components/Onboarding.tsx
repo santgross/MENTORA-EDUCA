@@ -6,7 +6,7 @@ import {
   Stethoscope, User, Briefcase, ArrowRight,
   RefreshCw, Mail, Phone, Lock, Info,
   RotateCcw, X, Building2, TrendingUp,
-  GraduationCap, HeartPulse, FlaskConical, Globe,
+  GraduationCap, HeartPulse, Globe,
   Rocket, BarChart3, Sparkles, ShieldCheck
 } from 'lucide-react';
 import { motion, AnimatePresence } from 'motion/react';
@@ -24,11 +24,10 @@ const MOTIVACIONES_NOVATO = [
 ];
 
 const MOTIVACIONES_EXPERIMENTADO = [
-  { id: 'ascend_kam', text: 'Ascender a Key Account Manager (KAM)', sub: 'Gestionar cuentas institucionales IESS/MSP/privadas de alto valor.', icon: Building2 },
+  { id: 'ascend_kam', text: 'Ascender a Key Account Manager (KAM)', sub: 'Gestionar cuentas institucionales de alto valor en la región.', icon: Building2 },
   { id: 'ascend_product', text: 'Moverme a Gerente de Producto o Brand Manager', sub: 'Del campo a la estrategia de marketing y posicionamiento de marca.', icon: BarChart3 },
   { id: 'improve_results', text: 'Mejorar mis resultados y superar mis metas actuales', sub: 'Tengo experiencia pero quiero técnicas avanzadas y mejores KPIs.', icon: TrendingUp },
   { id: 'multinational', text: 'Acceder a un laboratorio multinacional', sub: 'Pfizer, Bayer, Roche, Novartis, GSK u otras internacionales.', icon: Globe },
-  { id: 'specialty', text: 'Especializarme en un área terapéutica de alto valor', sub: 'Oncología, cardiología, endocrinología, neurología u otras.', icon: FlaskConical },
 ];
 
 const Onboarding: React.FC<OnboardingProps> = ({ onComplete, onBack }) => {
@@ -288,7 +287,7 @@ const Onboarding: React.FC<OnboardingProps> = ({ onComplete, onBack }) => {
                       </h2>
 
                       <p className="text-slate-400 text-sm leading-relaxed font-medium max-w-lg">
-                        Dr. Medix es el primer ecosistema de desarrollo profesional integral para visitadores médicos en Ecuador. Desarrollamos 6 dimensiones al mismo tiempo — porque en campo, todo ocurre al mismo tiempo.
+                        Dr. Medix es el primer ecosistema de desarrollo profesional integral para visitadores médicos en Latinoamérica. Desarrollamos 6 dimensiones al mismo tiempo — porque en campo, todo ocurre al mismo tiempo.
                       </p>
 
                       <div className="grid grid-cols-2 sm:grid-cols-3 gap-3 mb-8">
@@ -480,7 +479,7 @@ const Onboarding: React.FC<OnboardingProps> = ({ onComplete, onBack }) => {
                             Insight
                           </div>
                           {level === UserLevel.NOVATO ? (
-                            <p>Ideal para quienes buscan entrar al sector. El mercado farmacéutico en Ecuador proyecta un crecimiento del <span className="text-white font-bold">12%</span> anual en plazas para nuevos profesionales.</p>
+                            <p>Ideal para quienes buscan entrar al sector. El mercado farmacéutico en Latinoamérica proyecta un crecimiento del <span className="text-white font-bold">12%</span> anual en plazas para nuevos profesionales.</p>
                           ) : (
                             <p>Enfoque de alto rendimiento. Los visitadores que dominan herramientas digitales y KPIs incrementan su efectividad de cierre en un <span className="text-white font-bold">40%</span>.</p>
                           )}
