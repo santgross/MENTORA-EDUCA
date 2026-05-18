@@ -21,11 +21,15 @@ interface ModuleConfig {
 
 const CORE_MODULES_CONFIG: Record<number, ModuleConfig> = {
   1: {
-    title: "Ecosistema Farmacéutico EC",
-    subtitle: "Fundamentos del sector en Ecuador",
+    title: "Ecosistema Farmacéutico",
+    subtitle: "El tablero donde se juega tu carrera",
     duration: "1 semana",
     xpReward: 200,
-    objectives: ["Comprender el sistema de salud ecuatoriano", "Identificar actores clave del ecosistema", "Conocer la normativa ARCSA y MSP"]
+    objectives: [
+      "Dominar el sistema de salud de tu país — público, privado y asegurador — para saber dónde están las oportunidades reales",
+      "Entender quién decide, quién compra y quién prescribe: los 3 actores que determinan tu éxito en campo",
+      "Conocer la normativa regulatoria de tu mercado como ventaja competitiva, no como trámite"
+    ]
   },
   7: {
     title: "Normativa ARCSA/MSP",
