@@ -198,7 +198,7 @@ const Onboarding: React.FC<OnboardingProps> = ({ onComplete, onBack }) => {
               </p>
 
               <p className="text-white/30 text-[11px] leading-relaxed font-light">
-                El primer ecosistema de desarrollo profesional integral para visitadores médicos en Ecuador.
+                El primer ecosistema de desarrollo profesional integral para visitadores médicos en Latinoamérica.
               </p>
             </div>
 
@@ -358,7 +358,7 @@ const Onboarding: React.FC<OnboardingProps> = ({ onComplete, onBack }) => {
                                 }`}
                                 disabled={!!c.comingSoon}
                               >
-                                {c.flag} {c.name}{c.comingSoon ? ' (pronto)' : ''}
+                                <span role="img" aria-label={c.name}>{c.flag}</span> {c.name}{c.comingSoon ? ' (pronto)' : ''}
                               </button>
                             ))}
                           </div>
@@ -384,7 +384,13 @@ const Onboarding: React.FC<OnboardingProps> = ({ onComplete, onBack }) => {
                             <Phone className="absolute left-3 top-1/2 -translate-y-1/2 text-white/20 group-focus-within:text-medical-500 transition-colors" size={14} />
                             <input 
                               type="tel" 
-                              placeholder="+593 99 999 9999" 
+                              placeholder={
+                                country === 'CO' ? "+57 300 000 0000" :
+                                country === 'PE' ? "+51 900 000 000" :
+                                country === 'CL' ? "+56 9 0000 0000" :
+                                country === 'BO' ? "+591 700 00000" :
+                                "+593 99 999 9999"
+                              }
                               value={phone} 
                               onChange={e => setPhone(e.target.value)}
                               className="w-full pl-9 pr-4 py-2.5 bg-white/5 border border-white/10 rounded-xl focus:bg-white/[0.08] focus:border-medical-500/50 transition-all outline-none text-white text-xs sm:text-sm font-medium placeholder:text-white/20"
