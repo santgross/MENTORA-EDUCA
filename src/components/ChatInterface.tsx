@@ -9,7 +9,7 @@ import { motion, AnimatePresence } from 'motion/react';
 interface ChatInterfaceProps {
   messages: Message[];
   setMessages: React.Dispatch<React.SetStateAction<Message[]>>;
-  onXPIncrease: (options: { amount: number; activityId?: string }) => void;
+  onXPIncrease: (amount: number) => void;
   activeModuleId: number;
   userProfile: UserProfile;
 }
@@ -74,6 +74,7 @@ const LOADING_PHRASES = [
           const firstResponse = await sendMessageToGemini("Hola Dr. Medix, estoy listo para comenzar este módulo.", currentMode);
           const aiMsg: Message = { id: Date.now().toString(), role: 'model', text: firstResponse, timestamp: new Date() };
           setMessages([aiMsg]);
+          detectAndAwardXP(firstResponse);
         }
       } catch (err) {
         console.error("Error initializing chat:", err);
@@ -187,9 +188,10 @@ const LOADING_PHRASES = [
       const responseText = await sendMessageToGemini(userText, currentMode);
       const aiMsg: Message = { id: (Date.now()+1).toString(), role: 'model', text: responseText, timestamp: new Date() };
       setMessages(prev => [...prev, aiMsg]);
+      detectAndAwardXP(responseText);
       
       // Sumar 5 XP por cada mensaje enviado al mentor
-      onXPIncrease({ amount: 5 });
+      onXPIncrease(5);
     } catch (err) {
       console.error('Failed to send message', err);
     } finally {
@@ -209,6 +211,28 @@ const LOADING_PHRASES = [
 
   const displayMode = hoveredMode ?? currentMode;
   const displayInfo = MODES.find(m => m.id === displayMode)!;
+
+  const detectAndAwardXP = (responseText: string) => {
+    const text = responseText.toLowerCase();
+
+    // El Dr. Medix incluye estas señales en sus respuestas (ya están en los system prompts)
+    if (text.includes('+150 xp') || text.includes('módulo completado')) {
+      onXPIncrease(150);
+    } else if (text.includes('+100 xp') || text.includes('badge')) {
+      onXPIncrease(100);
+    } else if (text.includes('+80 xp') || text.includes('simulación completada')) {
+      onXPIncrease(80);
+    } else if (text.includes('+50 xp') || text.includes('quiz aprobado')) {
+      onXPIncrease(50);
+    } else if (text.includes('+30 xp') || text.includes('¡correcto!') || text.includes('¡excelente!') || text.includes('¡exacto!')) {
+      onXPIncrease(30);
+    } else if (text.includes('+15 xp') || text.includes('casi') || text.includes('parcialmente')) {
+      onXPIncrease(15);
+    } else if (text.includes('+5 xp') || text.includes('no es correcto') || text.includes('incorrecto')) {
+      onXPIncrease(5);
+    }
+    // Si no hay señal explícita, no suma XP — la interacción fue solo conversacional
+  };
 
   return (
     <div className="flex-1 flex flex-col h-full bg-[#020408] relative overflow-hidden">
@@ -423,10 +447,7 @@ const LOADING_PHRASES = [
                                     onComplete={(success) => {
                                       if (success) {
                                         // Sumar 25 XP al completar exitosamente un reto interactivo
-                                        onXPIncrease({ 
-                                          amount: 25, 
-                                          activityId: `widget_${activeModuleId}_${pIdx}_${Date.now()}` 
-                                        });
+                                        onXPIncrease(25);
                                       }
                                     }} 
                                   />

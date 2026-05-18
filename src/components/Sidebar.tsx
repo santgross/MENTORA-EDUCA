@@ -21,7 +21,7 @@ const Sidebar: React.FC<SidebarProps> = ({ user, activeModuleId, onLogout, onMod
     ? Math.min(((user.xp - currentRank.minXp) / (nextRank.minXp - currentRank.minXp)) * 100, 100)
     : 100;
 
-  const unlockedModuleIds = getUnlockedModuleIds(user.xp, user.completedModules);
+  const unlockedModuleIds = getUnlockedModuleIds(user.xp);
 
   return (
     <div className="w-72 lg:w-80 h-full glass-dark text-slate-400 flex flex-col z-20">

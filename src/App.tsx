@@ -193,66 +193,14 @@ function App() {
     setActiveModule(0);
   };
 
-  const handleXPIncrease = (options: { amount: number; activityId?: string }) => {
+  const handleXPIncrease = (amount: number = 10) => {
     if (!userProfile) return;
-    
-    // Garantizar que existan los arrays necesarios
-    const completedQuizzes = userProfile.completedQuizzes || [];
-    
-    // Si hay activityId, verificar si ya se completó para evitar duplicar XP
-    if (options.activityId && completedQuizzes.includes(options.activityId)) {
-      return;
-    }
+    const newXP = userProfile.xp + amount;
 
-    const now = new Date();
-    const nowISO = now.toISOString();
+    // Calcular nuevo rango automáticamente
+    const newRank = RANKS.slice().reverse().find(r => newXP >= r.minXp)?.title || 'Aprendiz';
 
-    // Cálculo de racha (streak) basado en lastActivity
-    let newStreak = userProfile.streak || 1;
-    if (userProfile.lastActivity) {
-      const lastDate = new Date(userProfile.lastActivity);
-      
-      // Normalizar a fechas sin hora para comparar días
-      const lastDay = new Date(lastDate.getFullYear(), lastDate.getMonth(), lastDate.getDate());
-      const currentDay = new Date(now.getFullYear(), now.getMonth(), now.getDate());
-      
-      const diffTime = currentDay.getTime() - lastDay.getTime();
-      const diffDays = Math.floor(diffTime / (1000 * 3600 * 24));
-      
-      if (diffDays === 1) {
-        // Participó el día siguiente: aumenta racha
-        newStreak += 1;
-      } else if (diffDays > 1) {
-        // Pasó más de un día: racha vuelve a 1
-        newStreak = 1;
-      }
-      // Si diffDays === 0, ya participó hoy, la racha se mantiene
-    }
-
-    const newXP = (userProfile.xp || 0) + options.amount;
-    
-    // Recalcular rango automáticamente según los límites definidos en constants.ts
-    let newRank = userProfile.rank;
-    const sortedRanks = [...RANKS].sort((a, b) => b.minXp - a.minXp);
-    const matchingRank = sortedRanks.find((r) => newXP >= r.minXp);
-    if (matchingRank) {
-      newRank = matchingRank.title;
-    }
-
-    // Registrar quiz o actividad si aplica
-    const newQuizzesList = options.activityId 
-      ? [...completedQuizzes, options.activityId] 
-      : completedQuizzes;
-
-    const newProfile: UserProfile = { 
-      ...userProfile, 
-      xp: newXP, 
-      rank: newRank,
-      streak: newStreak,
-      completedQuizzes: newQuizzesList,
-      lastActivity: nowISO
-    };
-
+    const newProfile = { ...userProfile, xp: newXP, rank: newRank };
     setUserProfile(newProfile);
     localStorage.setItem('dr_medix_profile', JSON.stringify(newProfile));
   };
@@ -490,7 +438,7 @@ function App() {
                     activeModuleId={activeModule}
                     messages={messages}
                     setMessages={setMessages}
-                    onXPIncrease={(options) => handleXPIncrease(options)}
+                    onXPIncrease={handleXPIncrease}
                     userProfile={userProfile || INITIAL_USER_PROFILE}
                   />
                 </motion.div>

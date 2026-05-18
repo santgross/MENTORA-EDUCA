@@ -6001,16 +6001,11 @@ export function getSystemPromptForModule(moduleId: number): string {
 }
 
 // Helper: calcular qué módulos están desbloqueados según XP actual
-export function getUnlockedModuleIds(xp: number, completedModules: number[]): number[] {
-  return MODULES.filter(m => {
-    // M0 y M1 siempre desbloqueados
-    if (m.id === 0 || m.id === 1) return true;
-    
-    // Si ya lo completó, está desbloqueado aunque baje de XP
-    if (completedModules.includes(m.id)) return true;
-    
-    // Requisito de XP
-    const requirement = MODULE_XP_REQUIREMENTS[m.id] || 0;
-    return xp >= requirement;
-  }).map(m => m.id);
-}
+export const getUnlockedModuleIds = (xp: number): number[] => {
+  return MODULES
+    .filter(module => {
+      const requiredXP = MODULE_XP_REQUIREMENTS[module.id] ?? 0;
+      return xp >= requiredXP;
+    })
+    .map(m => m.id);
+};
