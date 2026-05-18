@@ -1,6 +1,7 @@
 import React, { useState, useEffect } from 'react';
 import { UserLevel, UserProfile } from '../types';
 import { CUBO_DIMENSIONES } from '../constants';
+import { COUNTRIES, SupportedCountry } from '../country_routing';
 import {
   Stethoscope, User, Briefcase, ArrowRight,
   RefreshCw, Mail, Phone, Lock, Info,
@@ -35,9 +36,9 @@ const Onboarding: React.FC<OnboardingProps> = ({ onComplete, onBack }) => {
   const [name, setName] = useState('');
   const [email, setEmail] = useState('');
   const [phone, setPhone] = useState('');
-  const [country] = useState<'EC' | 'CO' | 'PE' | 'CL' | 'BO'>('EC');
   const [level, setLevel] = useState<UserLevel | null>(null);
   const [motivation, setMotivation] = useState('');
+  const [country, setCountry] = useState<SupportedCountry>('EC');
   const [verificationCode, setVerificationCode] = useState('');
   const [generatedCode, setGeneratedCode] = useState('');
   const [isSending, setIsSending] = useState(false);
@@ -337,6 +338,29 @@ const Onboarding: React.FC<OnboardingProps> = ({ onComplete, onBack }) => {
                               onChange={e => setName(e.target.value)}
                               className="w-full pl-9 pr-4 py-2.5 bg-white/5 border border-white/10 rounded-xl focus:bg-white/[0.08] focus:border-medical-500/50 transition-all outline-none text-white text-xs sm:text-sm font-medium placeholder:text-white/20"
                             />
+                          </div>
+                        </div>
+
+                        <div>
+                          <label className="text-[10px] font-bold text-white/40 uppercase tracking-[0.2em] mb-2 block">País</label>
+                          <div className="flex gap-2 flex-wrap">
+                            {COUNTRIES.map(c => (
+                              <button
+                                key={c.code}
+                                type="button"
+                                onClick={() => !c.comingSoon && setCountry(c.code as SupportedCountry)}
+                                className={`px-3 py-2 rounded-xl border text-xs font-medium transition-all ${
+                                  country === c.code
+                                    ? 'bg-medical-600 border-medical-500 text-white'
+                                    : c.comingSoon
+                                      ? 'bg-white/[0.02] border-white/5 text-white/20 cursor-not-allowed'
+                                      : 'bg-white/5 border-white/10 text-white/70 hover:bg-white/10'
+                                }`}
+                                disabled={!!c.comingSoon}
+                              >
+                                {c.flag} {c.name}{c.comingSoon ? ' (pronto)' : ''}
+                              </button>
+                            ))}
                           </div>
                         </div>
 
