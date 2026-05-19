@@ -72,12 +72,17 @@ NOTA: NO preguntes "¿en qué te ayudo?". TOMA LA INICIATIVA con el dilema estra
     `;
   }
 
-  // Construir el system prompt personalizado completo
+  const countryNames: Record<string, string> = {
+    EC: 'Ecuador', CO: 'Colombia', PE: 'Perú', CL: 'Chile', BO: 'Bolivia'
+  };
+  const countryName = countryNames[country] || 'Ecuador';
+
   currentSystemPrompt = `
 ${baseSystemPrompt}
 
 **PERFIL DEL ESTUDIANTE:**
 - Nombre: ${user.name}
+- País: ${countryName} (${country}) — TODA tu enseñanza debe estar contextualizada a ${countryName}. NUNCA preguntes el país al estudiante — ya lo sabes.
 - Nivel declarado: ${user.level}
 - XP actual: ${user.xp} (Rango: ${user.rank})
 - Módulo activo: ${moduleId}
