@@ -28,9 +28,13 @@ const MODE_PLACEHOLDER: Record<AppMode, string> = {
   [AppMode.MENTOR]:    'Comparte un resto de carrera y pide consejo al Mentor...',
 };
 
-const LOADING_PHRASES = [
+const getLoadingPhrases = (country: string): string[] => [
   "Cargando contenido especializado del módulo...",
   "Preparando tu mentor IA personalizado...",
+  country === 'CO' ? "Configurando el contexto colombiano..." :
+  country === 'PE' ? "Configurando el contexto peruano..." :
+  country === 'CL' ? "Configurando el contexto chileno..." :
+  country === 'BO' ? "Configurando el contexto boliviano..." :
   "Configurando el contexto ecuatoriano...",
   "Listo para guiarte paso a paso..."
 ];
@@ -43,6 +47,7 @@ const LOADING_PHRASES = [
   const [availableVoices, setAvailableVoices] = useState<SpeechSynthesisVoice[]>([]);
   const [hoveredMode, setHoveredMode] = useState<AppMode | null>(null);
   const [loadingPhraseIdx, setLoadingPhraseIdx] = useState(0);
+  const LOADING_PHRASES = getLoadingPhrases(userProfile.country || 'EC');
 
   const scrollRef = useRef<HTMLDivElement>(null);
   const messagesEndRef = useRef<HTMLDivElement>(null);
@@ -63,7 +68,7 @@ const LOADING_PHRASES = [
       }, 2000);
       return () => clearInterval(interval);
     }
-  }, [isLoading, messages.length]);
+  }, [isLoading, messages.length, LOADING_PHRASES.length]);
 
   useEffect(() => {
     const init = async () => {
