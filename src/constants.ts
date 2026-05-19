@@ -5954,8 +5954,8 @@ export const MODULE_XP_REQUIREMENTS: Record<number, number> = {
 
 export const MODULES = [
   { id: 0,  title: "Módulo 0: Onboarding y Diagnóstico",    unlocked: true  },
-  { id: 1,  title: "M1: Ecosistema Farmacéutico EC",         unlocked: true  },
-  { id: 7,  title: "M2: Normativa ARCSA/MSP",                unlocked: true },
+  { id: 1,  title: "M1: Ecosistema Farmacéutico",              unlocked: true  },
+  { id: 7,  title: "M7: Marco Regulatorio",                  unlocked: true },
   { id: 8,  title: "M3: Farmacovigilancia y Ética",          unlocked: true },
   { id: 2,  title: "M4: Anatomía y Fisiología",              unlocked: true },
   { id: 3,  title: "M5: Farmacología Estratégica",           unlocked: true },

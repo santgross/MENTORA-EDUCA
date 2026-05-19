@@ -128,7 +128,11 @@ const Sidebar: React.FC<SidebarProps> = ({ user, activeModuleId, onLogout, onMod
 
               <div className="flex-1 text-left min-w-0">
                 <div className={`text-xs font-medium truncate ${isActive ? 'text-white' : 'text-slate-400 group-hover:text-slate-300'}`}>
-                  {module.title}
+                  {module.id === 1 ? (
+                    user.country === 'CO' ? "M1: Ecosistema Farmacéutico CO" : "M1: Ecosistema Farmacéutico EC"
+                  ) : module.id === 7 ? (
+                    user.country === 'CO' ? "M7: Normativa INVIMA/MSPS" : "M7: Normativa ARCSA/MSP"
+                  ) : module.title}
                 </div>
               </div>
 
